@@ -606,6 +606,61 @@
   .related span { color: var(--ink-2); font-size: 13px; }
   .related code { font-size: 12px; }
 
+  .sitenav {
+    display: flex;
+    align-items: baseline;
+    gap: 6px 14px;
+    flex-wrap: wrap;
+    padding: 13px 17px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .sitenav .label {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    letter-spacing: -.01em;
+  }
+
+  .sitenav .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 3px 0;
+    min-width: 0;
+  }
+
+  .sitenav a {
+    font-size: 13.5px;
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    padding: 0 11px;
+    border-right: 1px solid var(--line);
+    line-height: 1.5;
+  }
+
+  .sitenav a:first-child { padding-left: 0; }
+  .sitenav a:last-child { border-right: 0; padding-right: 0; }
+  .sitenav a:hover { text-decoration-thickness: 2px; }
+
+  .sitenav a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 620px) {
+    .sitenav { padding: 12px 14px; gap: 4px 0; }
+    .sitenav .label { width: 100%; margin-bottom: 3px; }
+    .sitenav a { font-size: 13px; padding: 0 9px; }
+  }
+
   .site-foot {
     margin-top: 34px;
     padding-top: 18px;
@@ -619,6 +674,14 @@
     .summary { grid-template-columns: minmax(0, 1fr); }
     .metrics { flex-wrap: wrap; }
     .field { min-height: 220px; }
+
+    /* Auf schmalen Bildschirmen zuerst das Eingabefeld, die Auswertung darunter.
+       Vor der Eingabe zeigt sie nur Nullen und würde das Werkzeug nach unten drücken. */
+    main { display: flex; flex-direction: column; }
+    .rules { order: 1; }
+    .panes { order: 2; margin-top: 20px; }
+    .summary { order: 3; margin-top: 20px; }
+    .prose { order: 4; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -636,6 +699,19 @@
     </div>
     <span class="local-badge"><span class="dot"></span>Läuft komplett im Browser · nichts wird gesendet</span>
   </header>
+
+  <nav class="sitenav" aria-label="Weitere Seiten">
+    <span class="label">Wobei brauchst du Hilfe?</span>
+    <span class="links">
+      <a href="/unicode-zeichen/">Zeichen-Nachschlagewerk</a>
+      <a href="/geschuetztes-leerzeichen-word/">Word</a>
+      <a href="/geschuetztes-leerzeichen-excel/">Excel</a>
+      <a href="/csv-unsichtbare-zeichen/">CSV</a>
+      <a href="/claude-wasserzeichen/">Claude-Wasserzeichen</a>
+      <a href="/chatgpt-wasserzeichen/">ChatGPT-Wasserzeichen</a>
+      <a href="/ki-texte-erkennen/">KI-Texte erkennen</a>
+    </span>
+  </nav>
 
   <main>
     <div class="rules" role="group" aria-label="Bereinigungsregeln">
@@ -744,7 +820,7 @@
 
         <div>
           <h3>Woher kommen unsichtbare Zeichen in KI-generierten Texten?</h3>
-          <p>Aus der Typografie: schmale geschützte Leerzeichen vor Prozentzeichen, Geviertstriche statt Bindestrichen, echte Auslassungspunkte statt drei Punkten. Dazu kommt, was beim Kopieren aus Weboberflächen mitwandert. Diese Zeichen sind kein Wasserzeichen. Echte Wasserzeichen gibt es inzwischen – Claude trägt seit August 2026 eines –, sie stecken aber in der Wortwahl statt in Zeichen und lassen sich deshalb von keinem Zeichen-Werkzeug entfernen. Ausführlich steht das auf der Seite zu <a href="/chatgpt-wasserzeichen/">ChatGPT-Wasserzeichen</a>.</p>
+          <p>Aus der Typografie: schmale geschützte Leerzeichen vor Prozentzeichen, Geviertstriche statt Bindestrichen, echte Auslassungspunkte statt drei Punkten. Dazu kommt, was beim Kopieren aus Weboberflächen mitwandert. Diese Zeichen sind kein Wasserzeichen. Echte Wasserzeichen gibt es inzwischen – Claude trägt seit August 2026 eines –, sie stecken aber in der Wortwahl statt in Zeichen und lassen sich deshalb von keinem Zeichen-Werkzeug entfernen. Ausführlich steht das auf der Seite zu <a href="/chatgpt-wasserzeichen/">ChatGPT</a>.</p>
         </div>
 
         <div>
