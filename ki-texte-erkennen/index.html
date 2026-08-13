@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>KI-Texte erkennen: was funktioniert und was nicht</title>
+<meta name="description" content="KI-Detektoren wie GPTZero raten – sie prüfen kein Wasserzeichen. Warum die Hälfte ihrer Warnungen falsch ist, mit Rechner zum Selbstausprobieren.">
+
+<link rel="canonical" href="https://zeichenpruefer.de/ki-texte-erkennen/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Zeichenprüfer">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="KI-Texte erkennen: was funktioniert und was nicht">
+<meta property="og:description" content="Warum KI-Detektoren bei realistischen Annahmen mehr falsche als richtige Warnungen erzeugen – zum Selbstnachrechnen.">
+<meta property="og:url" content="https://zeichenpruefer.de/ki-texte-erkennen/">
+<meta property="og:image" content="https://zeichenpruefer.de/og-erkennen.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="KI-Texte erkennen – was funktioniert und was nicht">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KI-Texte erkennen: was funktioniert und was nicht">
+<meta name="twitter:description" content="KI-Detektoren raten. Warum die Hälfte ihrer Warnungen falsch ist – mit Rechner.">
+<meta name="twitter:image" content="https://zeichenpruefer.de/og-erkennen.png">
+
+<meta name="theme-color" content="#EBEDF2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1015" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B44E0'/%3E%3Ctext x='16' y='23' font-family='ui-monospace,monospace' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Zeichenprüfer", "item": "https://zeichenpruefer.de/" },
+        { "@type": "ListItem", "position": 2, "name": "KI-Texte erkennen", "item": "https://zeichenpruefer.de/ki-texte-erkennen/" }
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "KI-Texte erkennen: was funktioniert und was nicht",
+      "description": "Vergleich der drei Verfahren zur Erkennung KI-generierter Texte und warum statistische Detektoren bei realistischen Annahmen unbrauchbar viele Fehlalarme erzeugen.",
+      "inLanguage": "de",
+      "url": "https://zeichenpruefer.de/ki-texte-erkennen/",
+      "image": "https://zeichenpruefer.de/og-erkennen.png",
+      "dateModified": "2026-08-13",
+      "isPartOf": { "@type": "WebSite", "name": "Zeichenprüfer", "url": "https://zeichenpruefer.de/" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Sind KI-Detektoren wie GPTZero zuverlässig?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nein, nicht für Entscheidungen über einzelne Personen. Sie prüfen kein Wasserzeichen, sondern schätzen anhand statistischer Auffälligkeiten. Weil KI-Texte in den meisten Prüfstapeln in der Minderheit sind, ist selbst bei guter Genauigkeit ein großer Teil der Warnungen falsch." }
+        },
+        {
+          "@type": "Question",
+          "name": "Kann man das Claude-Wasserzeichen selbst prüfen?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Für Text derzeit nicht. Die Prüfung braucht einen geheimen Schlüssel, den nur Anthropic besitzt. Eine öffentliche Erkennungsschnittstelle ist angekündigt, aber noch nicht verfügbar. Bei Bilddateien lassen sich C2PA-Metadaten dagegen sofort prüfen." }
+        },
+        {
+          "@type": "Question",
+          "name": "Beweisen unsichtbare Zeichen, dass ein Text von einer KI stammt?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nein. Geschützte Leerzeichen, Geviertstriche und breitenlose Zeichen entstehen beim Kopieren aus jeder Weboberfläche, auch aus Wikipedia oder einem Redaktionssystem. Sie zeigen, dass Text kopiert wurde, nicht wer ihn geschrieben hat." }
+        },
+        {
+          "@type": "Question",
+          "name": "Warum flaggen KI-Detektoren Texte von Nicht-Muttersprachlern häufiger?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Weil sie messen, wie vorhersagbar ein Text ist. Wer in einer Fremdsprache schreibt, verwendet tendenziell häufigere Wörter und geradlinigere Satzstrukturen. Genau das werten die Verfahren als maschinentypisch." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+  :root {
+    --ground: #EBEDF2;
+    --surface: #FFFFFF;
+    --surface-2: #F4F6FA;
+    --line: #D6DAE4;
+    --line-soft: #E4E7EE;
+    --ink: #14161D;
+    --ink-2: #565D70;
+    --ink-3: #868DA0;
+    --accent: #2B44E0;
+    --accent-ink: #FFFFFF;
+    --accent-soft: rgba(43, 68, 224, .10);
+    --flag: #B94A15;
+    --flag-soft: rgba(185, 74, 21, .12);
+    --ok: #10704F;
+    --ok-soft: rgba(16, 112, 79, .12);
+    --shadow: 0 1px 2px rgba(20,22,29,.06), 0 8px 24px -12px rgba(20,22,29,.18);
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0E1015; --surface: #161922; --surface-2: #1B1F29;
+      --line: #2B303C; --line-soft: #232833;
+      --ink: #E7E9F0; --ink-2: #A2A9BA; --ink-3: #6E7688;
+      --accent: #8093FF; --accent-ink: #0E1015; --accent-soft: rgba(128,147,255,.14);
+      --flag: #F1874A; --flag-soft: rgba(241,135,74,.16);
+      --ok: #56C398; --ok-soft: rgba(86,195,152,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0E1015; --surface: #161922; --surface-2: #1B1F29;
+    --line: #2B303C; --line-soft: #232833;
+    --ink: #E7E9F0; --ink-2: #A2A9BA; --ink-3: #6E7688;
+    --accent: #8093FF; --accent-ink: #0E1015; --accent-soft: rgba(128,147,255,.14);
+    --flag: #F1874A; --flag-soft: rgba(241,135,74,.16);
+    --ok: #56C398; --ok-soft: rgba(86,195,152,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 26px 20px 70px; }
+
+  .crumbs { font-size: 12.5px; color: var(--ink-3); margin-bottom: 22px; }
+  .crumbs a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .crumbs a:hover { color: var(--accent); border-color: var(--accent); }
+  .crumbs span { margin: 0 7px; }
+
+  h1 {
+    margin: 0 0 12px;
+    font-family: var(--mono);
+    font-size: clamp(25px, 4.2vw, 34px);
+    font-weight: 600;
+    letter-spacing: -.035em;
+    line-height: 1.16;
+    text-wrap: balance;
+  }
+
+  .standfirst { margin: 0 0 24px; color: var(--ink-2); font-size: 16.5px; max-width: 66ch; }
+
+  h2 {
+    margin: 46px 0 10px;
+    font-family: var(--mono);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    scroll-margin-top: 18px;
+    text-wrap: balance;
+  }
+
+  h3 { margin: 24px 0 6px; font-size: 15.5px; font-weight: 600; }
+
+  p { max-width: 68ch; margin: 0 0 12px; color: var(--ink-2); }
+  p strong { color: var(--ink); font-weight: 600; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--accent); }
+
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  kbd {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 2px 7px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* Sofortlösung */
+
+  .solution {
+    margin: 0 0 26px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ok);
+    border-radius: 11px;
+    background: var(--surface);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .solution h2 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-family: var(--sans);
+    letter-spacing: 0;
+    color: var(--ok);
+  }
+
+  .solution ol { margin: 0; padding-left: 20px; }
+  .solution li { margin-bottom: 7px; color: var(--ink-2); }
+  .solution li:last-child { margin-bottom: 0; }
+  .solution li strong { color: var(--ink); }
+
+  /* Werkzeug */
+
+  .tool {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin: 16px 0 10px;
+  }
+
+  .tool-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    padding: 11px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .tool-title { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .tool-stat { font-size: 13px; color: var(--ink-2); }
+  .tool-stat b { font-family: var(--mono); color: var(--flag); font-variant-numeric: tabular-nums; }
+  .tool-stat[data-clean="true"] b { color: var(--ok); }
+
+  textarea {
+    width: 100%; display: block; border: 0;
+    padding: 14px; min-height: 120px; resize: vertical;
+    font-family: var(--mono); font-size: 13px; line-height: 1.65;
+    background: var(--surface); color: var(--ink);
+  }
+
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+  textarea::placeholder { color: var(--ink-3); }
+
+  .tool-foot {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 11px 14px;
+    border-top: 1px solid var(--line-soft);
+    background: var(--surface-2);
+  }
+
+  .btn {
+    font: inherit; font-size: 13px; padding: 6px 13px;
+    border-radius: 7px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink-2); cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+
+  .btn:hover { color: var(--ink); border-color: var(--ink-3); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
+  .btn.primary[data-done="true"] { background: var(--ok); border-color: var(--ok); }
+  .tool-note { font-size: 12.5px; color: var(--ink-3); margin-left: auto; }
+
+  /* Tabelle */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    margin-top: 16px;
+  }
+
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 13.5px; }
+
+  th, td { text-align: left; padding: 10px 15px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+
+  thead th {
+    font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); background: var(--surface-2); font-weight: 600; white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: 0; }
+  td { color: var(--ink-2); }
+  td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+
+  .faq-q { margin-top: 22px; }
+  .faq-q h3 { margin-bottom: 4px; }
+
+  /* Weiterführend */
+
+  .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 18px; }
+
+  .related a {
+    display: block;
+    padding: 15px 17px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    text-decoration: none;
+    transition: border-color .15s;
+  }
+
+  .related a:hover { border-color: var(--accent); }
+  .related b { display: block; color: var(--ink); font-size: 14.5px; margin-bottom: 3px; }
+  .related span { color: var(--ink-2); font-size: 13px; }
+
+  footer.bottom {
+    margin-top: 50px; padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-3); font-size: 13px;
+  }
+
+  footer.bottom p { color: var(--ink-3); }
+</style>
+
+<style>
+  .rechner {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .rechner-kopf {
+    padding: 15px 18px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .rechner-kopf h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .rechner-kopf p { margin: 4px 0 0; font-size: 13.5px; }
+
+  .regler { padding: 16px 18px 6px; display: grid; gap: 16px; }
+
+  .regler label { display: block; }
+
+  .regler .zeile {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .regler .name { font-size: 14px; color: var(--ink); font-weight: 500; }
+
+  .regler .wert {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  .regler input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+    margin: 0;
+  }
+
+  .regler .hinweis { font-size: 12.5px; color: var(--ink-3); margin-top: 4px; }
+
+  .ergebnis {
+    margin: 10px 18px 18px;
+    padding: 16px 18px;
+    border-radius: 11px;
+    background: var(--flag-soft);
+  }
+
+  .ergebnis .gross {
+    font-family: var(--mono);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    color: var(--flag);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  .ergebnis .satz { margin-top: 6px; color: var(--ink-2); font-size: 14px; max-width: none; }
+  .ergebnis[data-gut="true"] { background: var(--ok-soft); }
+  .ergebnis[data-gut="true"] .gross { color: var(--ok); }
+
+  .matrix { margin: 0 18px 18px; }
+
+  .matrix table { min-width: 0; }
+  .matrix td.zahl {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .matrix td.warn { color: var(--flag); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<nav class="crumbs" aria-label="Brotkrumennavigation">
+  <a href="/">Zeichenprüfer</a><span>›</span>KI-Texte erkennen
+</nav>
+
+<h1>KI-Texte erkennen: was funktioniert und was nicht</h1>
+<p class="standfirst">Für Bilddateien gibt es einen belastbaren Nachweis. Für Text gibt es ihn noch nicht — und die Werkzeuge, die ihn versprechen, liefern etwas anderes, als ihre Nutzer glauben. Diese Seite erklärt den Unterschied und lässt dich selbst nachrechnen, wie viele ihrer Warnungen daneben liegen.</p>
+
+<main>
+
+<h2 id="verfahren">Die drei Verfahren im Vergleich</h2>
+<p>„KI-Erkennung" bezeichnet drei grundverschiedene Dinge, die regelmäßig durcheinandergeworfen werden.</p>
+
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Verfahren</th>
+        <th scope="col">Grundlage</th>
+        <th scope="col">Heute nutzbar</th>
+        <th scope="col">Aussagekraft</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Wasserzeichen</td>
+        <td>Eingebrachtes Signal, mit geheimem Schlüssel prüfbar</td>
+        <td>Nein, angekündigt</td>
+        <td>Hoch, aber Verarbeitung statt Autorschaft</td>
+      </tr>
+      <tr>
+        <td>C2PA-Metadaten</td>
+        <td>Kryptografische Signatur an der Datei</td>
+        <td>Ja, bei Bilddateien</td>
+        <td>Treffer aussagekräftig, Nicht-Treffer wertlos</td>
+      </tr>
+      <tr>
+        <td>KI-Detektor</td>
+        <td>Statistische Schätzung aus dem Text</td>
+        <td>Ja</td>
+        <td>Gering, siehe unten</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>Der entscheidende Unterschied liegt zwischen den ersten beiden und dem dritten: Wasserzeichen und Signatur prüfen <strong>etwas, das absichtlich hineingelegt wurde</strong>. Ein Detektor prüft nur, ob ein Text <strong>so aussieht wie</strong> Texte, die er im Training gesehen hat. Das eine ist Messen, das andere Raten.</p>
+
+<h2 id="rechner">Warum Detektoren in der Praxis versagen</h2>
+<p>Das Problem ist nicht die Genauigkeit der Werkzeuge, sondern eine Eigenschaft der Statistik, die fast überall unterschlagen wird. Dreh selbst an den Reglern:</p>
+
+<section class="rechner" aria-label="Fehlalarm-Rechner">
+  <div class="rechner-kopf">
+    <h3>Fehlalarm-Rechner</h3>
+    <p>Angenommen, du prüfst 1.000 Texte mit einem Detektor.</p>
+  </div>
+
+  <div class="regler">
+    <label>
+      <span class="zeile"><span class="name">Anteil tatsächlicher KI-Texte</span><span class="wert" id="w-p">5 %</span></span>
+      <input type="range" id="r-p" min="1" max="50" value="5" step="1">
+      <span class="hinweis">Wie viele der geprüften Texte wirklich von einer KI stammen.</span>
+    </label>
+    <label>
+      <span class="zeile"><span class="name">Trefferquote des Detektors</span><span class="wert" id="w-t">95 %</span></span>
+      <input type="range" id="r-t" min="50" max="99" value="95" step="1">
+      <span class="hinweis">Anteil der KI-Texte, den er korrekt erkennt.</span>
+    </label>
+    <label>
+      <span class="zeile"><span class="name">Fehlalarmquote</span><span class="wert" id="w-f">5 %</span></span>
+      <input type="range" id="r-f" min="1" max="20" value="5" step="1">
+      <span class="hinweis">Anteil der Menschentexte, den er fälschlich flaggt.</span>
+    </label>
+  </div>
+
+  <div class="ergebnis" id="ergebnis" aria-live="polite">
+    <div class="gross" id="quote">50 %</div>
+    <p class="satz" id="satz">Von 96 Warnungen sind 48 falsch. Die Mehrheit der geflaggten Personen hat nichts getan. Anteil der Fehlalarme an allen Warnungen: 50 %.</p>
+  </div>
+
+  <div class="matrix table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Von 1.000 Texten</th>
+          <th scope="col">Geflaggt</th>
+          <th scope="col">Nicht geflaggt</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td id="z-ki">50 KI-Texte</td><td class="zahl" id="z-tp">48</td><td class="zahl" id="z-fn">2</td></tr>
+        <tr><td id="z-mensch">950 Menschentexte</td><td class="zahl warn" id="z-fp">48</td><td class="zahl" id="z-tn">902</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<p>Mit den Voreinstellungen — einem Detektor, der 95 von 100 KI-Texten findet und nur 5 von 100 Menschentexten falsch flaggt — ist ungefähr <strong>jede zweite Warnung ein Fehlalarm</strong>. Nicht, weil das Werkzeug schlecht wäre, sondern weil es viel mehr Menschentexte gibt, auf die sich die kleine Fehlerquote verteilt.</p>
+<p>Zieh den ersten Regler auf 2 %, wie es in einem gewöhnlichen Stapel Hausarbeiten realistisch sein könnte. Dann sind fast drei von vier Warnungen falsch.</p>
+
+<h2 id="bias">Die Fehlalarme treffen nicht zufällig</h2>
+<p>Detektoren messen im Kern, wie <strong>vorhersagbar</strong> ein Text ist: Wählt er die naheliegenden Wörter oder überraschende? Maschinelle Texte sind im Schnitt vorhersagbarer.</p>
+<p>Nur schreiben Menschen ebenfalls vorhersagbar, wenn sie in einer Fremdsprache schreiben. Wer nicht muttersprachlich formuliert, greift zu häufigeren Wörtern und geradlinigeren Sätzen — genau dem Muster, das die Verfahren als maschinentypisch werten. Untersuchungen zeigen entsprechend deutlich erhöhte Fehlalarmquoten bei Nicht-Muttersprachlern.</p>
+<p>Dasselbe gilt für sorgfältig redigierte Texte, für Fachtexte mit festen Formulierungen und für jeden, der gelernt hat, klar und gegliedert zu schreiben. Ein Detektor bestraft Verständlichkeit.</p>
+
+<h2 id="zeichen">Was unsichtbare Zeichen aussagen — und was nicht</h2>
+<p>Weil dieses Werkzeug genau solche Zeichen findet, gehört die Einordnung hierher: <strong>Sie beweisen nichts über die Autorschaft.</strong></p>
+<p>Geschützte Leerzeichen, Geviertstriche und breitenlose Zeichen entstehen beim Kopieren aus jeder Weboberfläche — aus Wikipedia, aus einem Redaktionssystem, aus einem PDF, aus Word. Sie zeigen, dass Text kopiert und typografisch gesetzt wurde. Nicht, von wem.</p>
+<p>Umgekehrt fehlen sie, sobald jemand den Text einmal durch einen einfachen Editor geschickt hat. Als Hinweis darauf, dass ein Text aus mehreren Quellen zusammengesetzt wurde, sind sie brauchbar. Als Beleg für eine Anschuldigung nicht. Was tatsächlich in solchen Texten steckt, zeigt dir das <a href="/">Werkzeug auf der Startseite</a> Zeichen für Zeichen.</p>
+
+<h2 id="stattdessen">Was stattdessen hilft</h2>
+<p>Wenn du wissen willst, ob jemand einen Text selbst verfasst hat, führt der verlässlichere Weg nicht über ein Werkzeug, sondern über den Prozess.</p>
+<p><strong>Zwischenstände statt Endprodukt.</strong> Entwurfsfassungen, Gliederungen, Versionsverläufe in Dokumenten. Ein gewachsener Text sieht anders aus als ein fertig gelieferter.</p>
+<p><strong>Ein Gespräch über den Inhalt.</strong> Fünf Minuten Nachfragen zu Aufbau, Quellen und verworfenen Alternativen sind aussagekräftiger als jeder Detektor — und fair, weil die Person antworten kann.</p>
+<p><strong>Aufgabenstellungen, bei denen es nicht darauf ankommt.</strong> Bezug auf konkrete Ereignisse im Kurs, eigene Daten, persönliche Beobachtungen. Das verschiebt die Frage von „wer hat getippt" zu „wer hat gedacht".</p>
+<p><strong>Und die Möglichkeit, es offenzulegen.</strong> Wer angeben darf, wo er KI eingesetzt hat, ohne bestraft zu werden, hat keinen Grund zu verschleiern. Das löst mehr als jede Erkennung.</p>
+
+<h2 id="faq">Häufige Fragen</h2>
+
+<div class="faq-q">
+  <h3>Prüfen GPTZero und ähnliche Werkzeuge das Wasserzeichen?</h3>
+  <p>Nein. Sie haben keinen Zugriff auf den geheimen Schlüssel und arbeiten rein statistisch. Die beiden Verfahren haben außer dem Ziel nichts gemeinsam.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Wann kommt eine echte Prüfmöglichkeit für Text?</h3>
+  <p>Anthropic hat eine öffentlich nutzbare Erkennungsschnittstelle angekündigt, ohne Termin. Bis dahin bleibt für Text nur die Schätzung. Der Stand dazu steht auf der Seite zum <a href="/claude-wasserzeichen/">Claude-Wasserzeichen</a>.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Und bei Bildern?</h3>
+  <p>Dort geht es heute schon. Claude-erzeugte PNG-, JPG- und SVG-Dateien tragen signierte C2PA-Metadaten, die sich mit dem Prüfwerkzeug unter contentcredentials.org auslesen lassen. Achtung: Ein Bildschirmfoto oder eine Formatumwandlung entfernt sie, ein Nicht-Treffer bedeutet also nichts.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Darf ich einen Detektor als Beweis verwenden?</h3>
+  <p>Rechtlich ist das keine Frage, die diese Seite beantworten kann. Praktisch: Ein Verfahren, bei dem je nach Annahme die Hälfte bis vier Fünftel der Warnungen falsch sind, trägt keine Entscheidung über eine einzelne Person. Als Anlass für ein Gespräch taugt es, als Nachweis nicht.</p>
+</div>
+
+<h2>Weiterführend</h2>
+<div class="related">
+  <a href="/claude-wasserzeichen/">
+    <b>Claude-Wasserzeichen</b>
+    <span>Wie es funktioniert und warum kein Zeichen-Werkzeug es entfernt</span>
+  </a>
+  <a href="/chatgpt-wasserzeichen/">
+    <b>ChatGPT-Wasserzeichen</b>
+    <span>Was dort im Text steckt und was das Entfernen leistet</span>
+  </a>
+  <a href="/unicode-zeichen/">
+    <b>Nachschlagewerk unsichtbare Zeichen</b>
+    <span>Jeder Codepoint einzeln erklärt, mit Herkunft und Symptomen</span>
+  </a>
+</div>
+
+</main>
+
+<footer class="bottom">
+  <p>Stand: 13. August 2026. Der Rechner ist ein Modell mit frei wählbaren Annahmen und keine Messung eines bestimmten Werkzeugs.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var N = 1000;
+  var rp = document.getElementById("r-p"),
+      rt = document.getElementById("r-t"),
+      rf = document.getElementById("r-f");
+
+  function el(id) { return document.getElementById(id); }
+
+  function rechne() {
+    var p = +rp.value / 100, t = +rt.value / 100, f = +rf.value / 100;
+
+    var ki = Math.round(N * p);
+    var mensch = N - ki;
+    var tp = Math.round(ki * t);
+    var fn = ki - tp;
+    var fp = Math.round(mensch * f);
+    var tn = mensch - fp;
+    var warnungen = tp + fp;
+    var anteil = warnungen ? fp / warnungen : 0;
+
+    el("w-p").textContent = rp.value + " %";
+    el("w-t").textContent = rt.value + " %";
+    el("w-f").textContent = rf.value + " %";
+
+    el("z-ki").textContent = ki.toLocaleString("de-DE") + " KI-Texte";
+    el("z-mensch").textContent = mensch.toLocaleString("de-DE") + " Menschentexte";
+    el("z-tp").textContent = tp.toLocaleString("de-DE");
+    el("z-fn").textContent = fn.toLocaleString("de-DE");
+    el("z-fp").textContent = fp.toLocaleString("de-DE");
+    el("z-tn").textContent = tn.toLocaleString("de-DE");
+
+    var prozent = Math.round(anteil * 100);
+    el("quote").textContent = prozent + " %";
+    el("ergebnis").dataset.gut = prozent <= 10 ? "true" : "false";
+
+    var satz;
+    if (!warnungen) {
+      satz = "Der Detektor schlägt bei diesen Annahmen gar nicht an.";
+    } else if (prozent >= 50) {
+      satz = "Von " + warnungen + " Warnungen sind " + fp + " falsch. Die Mehrheit der geflaggten Personen hat nichts getan.";
+    } else if (prozent >= 20) {
+      satz = "Von " + warnungen + " Warnungen sind " + fp + " falsch. Jede fünfte bis zweite trifft die Unschuldigen.";
+    } else {
+      satz = "Von " + warnungen + " Warnungen sind " + fp + " falsch.";
+    }
+    el("satz").textContent = satz + " Anteil der Fehlalarme an allen Warnungen: " + prozent + " %.";
+  }
+
+  [rp, rt, rf].forEach(function (r) {
+    r.addEventListener("input", rechne);
+  });
+
+  rechne();
+})();
+</script>
+</body>
+</html>

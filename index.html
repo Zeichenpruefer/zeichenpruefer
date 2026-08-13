@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Unsichtbare Zeichen aus Text entfernen – Zeichenprüfer</title>
+<meta name="description" content="Unsichtbare Unicode-Zeichen, geschützte Leerzeichen und typografische Sonderzeichen aus Text entfernen – kostenlos, ohne Upload, direkt im Browser.">
+
+<link rel="canonical" href="https://zeichenpruefer.de/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zeichenprüfer">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Unsichtbare Zeichen aus Text entfernen – Zeichenprüfer">
+<meta property="og:description" content="Entfernt unsichtbare Unicode-Steuerzeichen, exotische Leerzeichen und typografische Spuren aus Texten – und zeigt vorher genau, was drinsteckt.">
+<meta property="og:url" content="https://zeichenpruefer.de/">
+<meta property="og:image" content="https://zeichenpruefer.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zeichenprüfer – unsichtbare Zeichen aus Text entfernen">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Unsichtbare Zeichen aus Text entfernen – Zeichenprüfer">
+<meta name="twitter:description" content="Entfernt unsichtbare Unicode-Steuerzeichen und typografische Spuren aus Texten. Ohne Upload, direkt im Browser.">
+<meta name="twitter:image" content="https://zeichenpruefer.de/og-image.png">
+
+<meta name="theme-color" content="#EBEDF2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1015" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B44E0'/%3E%3Ctext x='16' y='23' font-family='ui-monospace,monospace' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Zeichenprüfer",
+      "url": "https://zeichenpruefer.de/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Alle – läuft im Browser",
+      "inLanguage": "de",
+      "description": "Werkzeug, das unsichtbare Unicode-Steuerzeichen, Sonderleerzeichen und typografische Zeichen aus Texten entfernt und jede Fundstelle mit ihrem Codepoint anzeigt.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "featureList": [
+        "Unsichtbare Steuerzeichen entfernen",
+        "Geschützte und schmale Leerzeichen normalisieren",
+        "Gedankenstriche und Auslassungspunkte ersetzen",
+        "Typografische Anführungszeichen begradigen",
+        "Analyse-Ansicht mit Unicode-Codepoints"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was sind unsichtbare Zeichen in einem Text?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Unicode enthält Zeichen, die beim Lesen keine sichtbare Form haben, aber trotzdem im Text stehen – etwa das breitenlose Leerzeichen U+200B, der Wortverbinder U+2060 oder das Byte-Order-Mark U+FEFF. Sie belegen Speicher, verschieben Zeichenzählungen und brechen Suchen, Sortierungen und Vergleiche, obwohl auf dem Bildschirm nichts zu sehen ist." }
+        },
+        {
+          "@type": "Question",
+          "name": "Woher kommen unsichtbare Zeichen in KI-generierten Texten?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Meist aus der Typografie des Modells und aus der Zwischenablage: schmale geschützte Leerzeichen vor Prozentzeichen, geschützte Leerzeichen in Zahlen, Variationsselektoren hinter Emojis, gelegentlich breitenlose Leerzeichen aus kopierten Webinhalten. Diese Zeichen sind kein Wasserzeichen. Echte Wasserzeichen gibt es inzwischen, etwa bei Claude seit August 2026, sie stecken aber in der Wortwahl statt in einzelnen Zeichen und lassen sich deshalb von keinem zeichenbasierten Werkzeug entfernen." }
+        },
+        {
+          "@type": "Question",
+          "name": "Wird mein Text hochgeladen oder gespeichert?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nein. Die gesamte Verarbeitung passiert per JavaScript im Browser des Nutzers. Es gibt keinen Server, der den Text entgegennimmt, keine Datenbank und kein Analyse-Skript von Dritten." }
+        },
+        {
+          "@type": "Question",
+          "name": "Kann man mit dem Entfernen unsichtbarer Zeichen einen KI-Detektor umgehen?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nein. KI-Detektoren bewerten Wortwahl, Satzbau und statistische Muster im Text, nicht unsichtbare Zeichen. Das Entfernen von Steuerzeichen ändert die Formatierung, nicht den Schreibstil." }
+        },
+        {
+          "@type": "Question",
+          "name": "Warum stört ein geschütztes Leerzeichen überhaupt?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Weil viele Systeme es nicht als Leerzeichen behandeln. Suchfunktionen finden den Begriff nicht, Programmiersprachen werfen Syntaxfehler, CSV-Importe verrutschen und Zeilenumbrüche entstehen an unerwarteten Stellen." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+  :root {
+    --ground: #EBEDF2;
+    --surface: #FFFFFF;
+    --surface-2: #F4F6FA;
+    --line: #D6DAE4;
+    --line-soft: #E4E7EE;
+    --ink: #14161D;
+    --ink-2: #565D70;
+    --ink-3: #868DA0;
+    --accent: #2B44E0;
+    --accent-ink: #FFFFFF;
+    --accent-soft: rgba(43, 68, 224, .10);
+    --flag: #B94A15;
+    --flag-soft: rgba(185, 74, 21, .12);
+    --swap: #0D6E7C;
+    --swap-soft: rgba(13, 110, 124, .12);
+    --ok: #10704F;
+    --shadow: 0 1px 2px rgba(20, 22, 29, .06), 0 8px 24px -12px rgba(20, 22, 29, .18);
+
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0E1015;
+      --surface: #161922;
+      --surface-2: #1B1F29;
+      --line: #2B303C;
+      --line-soft: #232833;
+      --ink: #E7E9F0;
+      --ink-2: #A2A9BA;
+      --ink-3: #6E7688;
+      --accent: #8093FF;
+      --accent-ink: #0E1015;
+      --accent-soft: rgba(128, 147, 255, .14);
+      --flag: #F1874A;
+      --flag-soft: rgba(241, 135, 74, .16);
+      --swap: #55C6D2;
+      --swap-soft: rgba(85, 198, 210, .14);
+      --ok: #56C398;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 32px -16px rgba(0, 0, 0, .7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0E1015;
+    --surface: #161922;
+    --surface-2: #1B1F29;
+    --line: #2B303C;
+    --line-soft: #232833;
+    --ink: #E7E9F0;
+    --ink-2: #A2A9BA;
+    --ink-3: #6E7688;
+    --accent: #8093FF;
+    --accent-ink: #0E1015;
+    --accent-soft: rgba(128, 147, 255, .14);
+    --flag: #F1874A;
+    --flag-soft: rgba(241, 135, 74, .16);
+    --swap: #55C6D2;
+    --swap-soft: rgba(85, 198, 210, .14);
+    --ok: #56C398;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 32px -16px rgba(0, 0, 0, .7);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--accent);
+    text-underline-offset: 2px;
+  }
+
+  a:hover { text-decoration: none; }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ---------- Kopf ---------- */
+
+  .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .wordmark {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: clamp(26px, 4.4vw, 38px);
+    font-weight: 600;
+    letter-spacing: -.03em;
+    text-wrap: balance;
+  }
+
+  .wordmark .caret { color: var(--accent); font-weight: 400; }
+
+  .tagline {
+    margin: 6px 0 0;
+    color: var(--ink-2);
+    max-width: 58ch;
+  }
+
+  .local-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+
+  .local-badge .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ok);
+  }
+
+  /* ---------- Regeln ---------- */
+
+  .rules { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+  .rule {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 14px 8px 11px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+
+  .rule:hover { border-color: var(--ink-3); }
+
+  .rule input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+  .rule .box {
+    width: 15px; height: 15px;
+    flex: none;
+    border: 1.5px solid var(--ink-3);
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    transition: background .15s, border-color .15s;
+  }
+
+  .rule .box::after {
+    content: "";
+    width: 7px; height: 4px;
+    border-left: 2px solid var(--accent-ink);
+    border-bottom: 2px solid var(--accent-ink);
+    transform: rotate(-45deg) scale(.4);
+    opacity: 0;
+    transition: opacity .12s, transform .12s;
+  }
+
+  .rule:has(input:checked) {
+    color: var(--ink);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .rule:has(input:checked) .box { background: var(--accent); border-color: var(--accent); }
+  .rule:has(input:checked) .box::after { opacity: 1; transform: rotate(-45deg) scale(1); }
+  .rule:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- Zusammenfassung ---------- */
+
+  .summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px 24px;
+    align-items: center;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .verdict {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .verdict-count {
+    font-family: var(--mono);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--flag);
+  }
+
+  .verdict[data-clean="true"] .verdict-count { color: var(--ok); }
+  .verdict-text { color: var(--ink-2); }
+
+  .metrics { display: flex; gap: 22px; }
+  .metric { display: flex; flex-direction: column; gap: 2px; }
+
+  .metric-label {
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .metric-value {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .findings {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line-soft);
+  }
+
+  .findings:empty { display: none; }
+
+  .finding {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12.5px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+  }
+
+  .finding .code { font-family: var(--mono); font-size: 11.5px; letter-spacing: .02em; }
+  .finding .n { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-3); }
+
+  .finding[data-kind="invisible"] { background: var(--flag-soft); border-color: transparent; }
+  .finding[data-kind="invisible"] .code { color: var(--flag); }
+  .finding[data-kind="swap"] { background: var(--swap-soft); border-color: transparent; }
+  .finding[data-kind="swap"] .code { color: var(--swap); }
+
+  /* ---------- Arbeitsflächen ---------- */
+
+  .panes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .pane {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .pane-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px 10px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface-2);
+  }
+
+  .pane-title {
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .pane-tools { display: flex; gap: 6px; align-items: center; }
+
+  .btn {
+    font: inherit;
+    font-size: 12.5px;
+    padding: 5px 11px;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+
+  .btn:hover { color: var(--ink); border-color: var(--ink-3); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 500;
+  }
+
+  .btn.primary:hover { color: var(--accent-ink); filter: brightness(1.08); }
+  .btn.primary[data-done="true"] { background: var(--ok); border-color: var(--ok); }
+
+  .tabs { display: flex; gap: 4px; }
+
+  .tab {
+    font: inherit;
+    font-size: 12.5px;
+    padding: 4px 10px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-3);
+    cursor: pointer;
+  }
+
+  .tab[aria-selected="true"] {
+    background: var(--surface);
+    border-color: var(--line);
+    color: var(--ink);
+  }
+
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .field {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    tab-size: 4;
+    padding: 16px;
+    min-height: 340px;
+    max-height: 56vh;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  textarea.field {
+    border: 0;
+    resize: vertical;
+    width: 100%;
+    display: block;
+  }
+
+  textarea.field:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+  textarea.field::placeholder { color: var(--ink-3); }
+
+  .view[hidden] { display: none; }
+
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.9em;
+    padding: 0 .3em;
+    margin: 0 .06em;
+    border-radius: 4px;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    vertical-align: baseline;
+    cursor: help;
+  }
+
+  .mark[data-kind="invisible"] { background: var(--flag); color: var(--surface); }
+  .mark[data-kind="swap"] { background: var(--swap-soft); color: var(--swap); box-shadow: inset 0 0 0 1px var(--swap); }
+
+  /* ---------- Redaktioneller Teil ---------- */
+
+  .prose {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px 44px;
+    margin-top: 28px;
+    padding-top: 30px;
+    border-top: 1px solid var(--line);
+  }
+
+  .prose-full { grid-column: 1 / -1; }
+
+  .prose h2 {
+    margin: 0 0 10px;
+    font-family: var(--mono);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+  }
+
+  .prose h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .prose p {
+    margin: 0 0 10px;
+    color: var(--ink-2);
+    max-width: 68ch;
+  }
+
+  .prose p:last-child { margin-bottom: 0; }
+  .prose code { font-family: var(--mono); font-size: 12.5px; color: var(--ink); }
+
+  .faq { display: flex; flex-direction: column; gap: 18px; }
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 560px;
+    font-size: 13.5px;
+  }
+
+  caption {
+    caption-side: bottom;
+    padding: 10px 14px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+    text-align: left;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+  }
+
+  thead th {
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    background: var(--surface-2);
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: 0; }
+  td { color: var(--ink-2); }
+
+  td.cp {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 14px; }
+
+  .related a {
+    display: block;
+    padding: 15px 17px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    text-decoration: none;
+    transition: border-color .15s;
+  }
+
+  .related a:hover { border-color: var(--accent); }
+  .related b { display: block; color: var(--ink); font-size: 14.5px; margin-bottom: 3px; }
+  .related span { color: var(--ink-2); font-size: 13px; }
+  .related code { font-size: 12px; }
+
+  .site-foot {
+    margin-top: 34px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-3);
+    font-size: 12.5px;
+  }
+
+  @media (max-width: 860px) {
+    .panes { grid-template-columns: minmax(0, 1fr); }
+    .summary { grid-template-columns: minmax(0, 1fr); }
+    .metrics { flex-wrap: wrap; }
+    .field { min-height: 220px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <div>
+      <h1 class="wordmark">Zeichenprüfer<span class="caret">_</span></h1>
+      <p class="tagline">Entfernt unsichtbare Steuerzeichen, exotische Leerzeichen und typografische Eigenheiten aus Texten – und zeigt vorher genau, was drinsteckt.</p>
+    </div>
+    <span class="local-badge"><span class="dot"></span>Läuft komplett im Browser · nichts wird gesendet</span>
+  </header>
+
+  <main>
+    <div class="rules" role="group" aria-label="Bereinigungsregeln">
+      <label class="rule"><input type="checkbox" id="r-invisible" checked><span class="box"></span>Unsichtbare Steuerzeichen entfernen</label>
+      <label class="rule"><input type="checkbox" id="r-space" checked><span class="box"></span>Sonderleerzeichen → normales Leerzeichen</label>
+      <label class="rule"><input type="checkbox" id="r-dash" checked><span class="box"></span>Gedankenstriche &amp; Auslassungspunkte</label>
+      <label class="rule"><input type="checkbox" id="r-quote"><span class="box"></span>Typografische Anführungszeichen → gerade</label>
+      <label class="rule"><input type="checkbox" id="r-ws" checked><span class="box"></span>Leerraum aufräumen</label>
+    </div>
+
+    <section class="summary" aria-live="polite" style="margin-top:20px">
+      <div class="verdict" id="verdict" data-clean="true">
+        <span class="verdict-count" id="verdict-count">0</span>
+        <span class="verdict-text" id="verdict-text">Noch kein Text eingefügt.</span>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <span class="metric-label">Vorher</span>
+          <span class="metric-value" id="m-before">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Nachher</span>
+          <span class="metric-value" id="m-after">0</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Wörter</span>
+          <span class="metric-value" id="m-words">0</span>
+        </div>
+      </div>
+      <div class="findings" id="findings"></div>
+    </section>
+
+    <div class="panes" style="margin-top:20px">
+      <section class="pane">
+        <div class="pane-head">
+          <span class="pane-title">Original</span>
+          <div class="pane-tools">
+            <button class="btn" type="button" id="btn-sample">Beispiel</button>
+            <button class="btn" type="button" id="btn-clear">Leeren</button>
+          </div>
+        </div>
+        <label for="input" class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Text zum Bereinigen einfügen</label>
+        <textarea class="field" id="input" spellcheck="false" placeholder="Text hier einfügen (⌘V)…"></textarea>
+      </section>
+
+      <section class="pane">
+        <div class="pane-head">
+          <div class="tabs" role="tablist" aria-label="Ansicht">
+            <button class="tab" type="button" role="tab" id="tab-clean" aria-selected="true" aria-controls="view-clean">Bereinigt</button>
+            <button class="tab" type="button" role="tab" id="tab-scan" aria-selected="false" aria-controls="view-scan">Analyse</button>
+          </div>
+          <div class="pane-tools">
+            <button class="btn primary" type="button" id="btn-copy">Kopieren</button>
+          </div>
+        </div>
+        <div class="field view" id="view-clean" role="tabpanel" aria-labelledby="tab-clean"></div>
+        <div class="field view" id="view-scan" role="tabpanel" aria-labelledby="tab-scan" hidden></div>
+      </section>
+    </div>
+
+    <div class="prose">
+      <section class="prose-full">
+        <h2>Was unsichtbare Zeichen sind – und warum sie stören</h2>
+        <p>Unicode kennt Zeichen, die keine sichtbare Form haben, aber trotzdem im Text stehen. Sie belegen Speicherplatz, verschieben Zeichenzählungen und richten überall dort Schaden an, wo Texte maschinell weiterverarbeitet werden: Die Suche findet einen Begriff nicht, obwohl er offensichtlich dasteht. Ein CSV-Import verrutscht um eine Spalte. Eine Programmzeile wirft einen Syntaxfehler an einer Stelle, die völlig korrekt aussieht. Ein Zeilenumbruch fällt an eine unerwartete Position, weil dort ein geschütztes Leerzeichen sitzt.</p>
+        <p>Besonders häufig tauchen solche Zeichen auf, wenn Text durch mehrere Stationen gewandert ist – aus einer Webseite in ein Textverarbeitungsprogramm, aus einem PDF in eine E-Mail, aus einem Chatfenster in ein Redaktionssystem. Jede Station bringt ihre eigene Typografie mit. Der Zeichenprüfer geht jedes einzelne Zeichen durch des eingefügten Texts, ordnet es einer Regel zu und zeigt dir in der Analyse-Ansicht, wo genau etwas gefunden wurde, samt Unicode-Codepoint zum Nachschlagen.</p>
+        <p>Wenn du wissen willst, was hinter einem bestimmten Codepoint steckt – etwa <a href="/unicode-zeichen/#u202f">U+202F</a>, <a href="/unicode-zeichen/#u200b">U+200B</a> oder <a href="/unicode-zeichen/#ufeff">U+FEFF</a> – findest du im <a href="/unicode-zeichen/">Nachschlagewerk für unsichtbare Zeichen</a> zu jedem Eintrag die Herkunft, die typischen Symptome und den passenden Suchen-und-Ersetzen-Befehl für Word, Excel und VS Code.</p>
+      </section>
+
+      <section class="prose-full">
+        <h2>Diese Zeichen findet und ersetzt der Zeichenprüfer</h2>
+        <div class="table-scroll">
+          <table>
+            <caption>Auswahl der häufigsten Fundstücke. Die vollständige Liste umfasst rund 60 Codepoints, darunter alle Bidi-Steuerzeichen und Variationsselektoren. Ausführliche Beschreibung jedes Zeichens im <a href="/unicode-zeichen/">Unicode-Nachschlagewerk</a>.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Codepoint</th>
+                <th scope="col">Zeichen</th>
+                <th scope="col">Typischer Ursprung</th>
+                <th scope="col">Ergebnis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="cp">U+200B</td><td>Breitenloses Leerzeichen</td><td>Kopierte Webseiten, Zeilenumbruch-Hilfen in HTML</td><td>entfernt</td></tr>
+              <tr><td class="cp">U+FEFF</td><td>Byte-Order-Mark</td><td>Dateianfang aus Windows-Editoren, CSV-Exporte</td><td>entfernt</td></tr>
+              <tr><td class="cp">U+200D</td><td>Breitenloser Verbinder (ZWJ)</td><td>Zusammengesetzte Emojis</td><td>entfernt</td></tr>
+              <tr><td class="cp">U+FE0F</td><td>Variationsselektor</td><td>Emoji-Darstellung in Farbe statt Schwarzweiß</td><td>entfernt</td></tr>
+              <tr><td class="cp">U+00AD</td><td>Weiches Trennzeichen</td><td>Silbentrennung aus Satzprogrammen</td><td>entfernt</td></tr>
+              <tr><td class="cp">U+E0000–E007F</td><td>Tag-Zeichen</td><td>Können versteckte Nutzdaten in Text transportieren</td><td>entfernt</td></tr>
+              <tr><td class="cp">U+00A0</td><td>Geschütztes Leerzeichen</td><td>Zahlen mit Einheiten, Abkürzungen wie „z.&nbsp;B."</td><td>normales Leerzeichen</td></tr>
+              <tr><td class="cp">U+202F</td><td>Schmales geschütztes Leerzeichen</td><td>Vor Prozent- und Einheitenzeichen</td><td>normales Leerzeichen</td></tr>
+              <tr><td class="cp">U+2014</td><td>Geviertstrich (—)</td><td>Gedankenstriche in gesetztem Text</td><td>Bindestrich</td></tr>
+              <tr><td class="cp">U+2026</td><td>Auslassungspunkte (…)</td><td>Autokorrektur aus drei Punkten</td><td>drei Punkte</td></tr>
+              <tr><td class="cp">U+201C / U+201D</td><td>Typografische Anführungszeichen</td><td>Autokorrektur in Textverarbeitungen</td><td>gerade (optional)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="prose-full faq">
+        <h2>Häufige Fragen</h2>
+
+        <div>
+          <h3>Wird mein Text hochgeladen oder gespeichert?</h3>
+          <p>Nein. Die Verarbeitung läuft vollständig in deinem Browser. Es gibt keinen Server, der Text entgegennimmt, keine Datenbank und kein Analyse-Skript von Dritten. Du kannst die Seite laden, die Verbindung trennen und trotzdem weiterarbeiten.</p>
+        </div>
+
+        <div>
+          <h3>Woher kommen unsichtbare Zeichen in KI-generierten Texten?</h3>
+          <p>Aus der Typografie: schmale geschützte Leerzeichen vor Prozentzeichen, Geviertstriche statt Bindestrichen, echte Auslassungspunkte statt drei Punkten. Dazu kommt, was beim Kopieren aus Weboberflächen mitwandert. Diese Zeichen sind kein Wasserzeichen. Echte Wasserzeichen gibt es inzwischen – Claude trägt seit August 2026 eines –, sie stecken aber in der Wortwahl statt in Zeichen und lassen sich deshalb von keinem Zeichen-Werkzeug entfernen. Ausführlich steht das auf der Seite zu <a href="/chatgpt-wasserzeichen/">ChatGPT-Wasserzeichen</a>.</p>
+        </div>
+
+        <div>
+          <h3>Kann man damit einen KI-Detektor umgehen?</h3>
+          <p>Nein. Detektoren bewerten Wortwahl, Satzbau und statistische Muster, nicht unsichtbare Zeichen. Das Werkzeug ändert die Formatierung, nicht den Schreibstil. Wer das erwartet, wird enttäuscht – und sollte es auch.</p>
+        </div>
+
+        <div>
+          <h3>Warum sind die typografischen Anführungszeichen standardmäßig ausgeschaltet?</h3>
+          <p>Weil deutsche Texte mit „…" korrekt gesetzt sind. Sie zu begradigen wäre eine Verschlechterung, außer du brauchst den Text für Code, eine CSV-Datei oder ein System, das nur ASCII verträgt. Deshalb ist die Regel vorhanden, aber nicht vorausgewählt.</p>
+        </div>
+
+        <div>
+          <h3>Bleiben Umlaute und Emojis erhalten?</h3>
+          <p>Umlaute ja, uneingeschränkt. Emojis bleiben als Zeichen erhalten, verlieren aber ihre Variationsselektoren und Verbinder – zusammengesetzte Emojis wie Familien- oder Flaggensymbole können dadurch in ihre Einzelteile zerfallen. Wenn dir das wichtig ist, schalte „Unsichtbare Steuerzeichen entfernen" für diesen Text ab.</p>
+        </div>
+      </section>
+
+      <section class="prose-full">
+        <h2>Anleitungen für einzelne Programme</h2>
+        <p>Wenn du das Problem lieber direkt in deinem Programm lösen willst, statt Text hin- und herzukopieren:</p>
+        <div class="related">
+          <a href="/geschuetztes-leerzeichen-word/">
+            <b>Word</b>
+            <span>Formatierungszeichen sichtbar machen, mit <code>^s</code> ersetzen, Autokorrektur abschalten</span>
+          </a>
+          <a href="/geschuetztes-leerzeichen-excel/">
+            <b>Excel</b>
+            <span>Warum GLÄTTEN versagt und welche Formel mit ZEICHEN(160) funktioniert</span>
+          </a>
+          <a href="/csv-unsichtbare-zeichen/">
+            <b>CSV-Dateien</b>
+            <span>Byte-Order-Mark erkennen, erste Spalte reparieren, Umlaute retten</span>
+          </a>
+          <a href="/chatgpt-wasserzeichen/">
+            <b>KI-Texte</b>
+            <span>Was in ChatGPT-Texten steckt und was das Entfernen wirklich leistet</span>
+          </a>
+          <a href="/claude-wasserzeichen/">
+            <b>Claude-Texte</b>
+            <span>Echtes Wasserzeichen, aber keines aus Zeichen – was das bedeutet</span>
+          </a>
+          <a href="/ki-texte-erkennen/">
+            <b>KI-Texte erkennen</b>
+            <span>Warum Detektoren raten und was stattdessen hilft</span>
+          </a>
+          <a href="/unicode-zeichen/">
+            <b>Nachschlagewerk</b>
+            <span>Alle Codepoints einzeln erklärt, mit Herkunft und Symptomen</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <p>Zeichenprüfer ist ein kostenloses Werkzeug ohne Registrierung, ohne Tracking und ohne Server-Verarbeitung. Eine einzige HTML-Datei, die auch offline funktioniert.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var INVISIBLE = {
+    0x200B: "Breitenloses Leerzeichen (ZWSP)",
+    0x200C: "Breitenloser Nicht-Verbinder (ZWNJ)",
+    0x200D: "Breitenloser Verbinder (ZWJ)",
+    0x2060: "Wortverbinder",
+    0xFEFF: "Byte-Order-Mark / breitenloses NBSP",
+    0x00AD: "Weiches Trennzeichen",
+    0x034F: "Combining Grapheme Joiner",
+    0x061C: "Arabisches Buchstabenzeichen",
+    0x180E: "Mongolischer Vokaltrenner",
+    0x2061: "Unsichtbarer Funktionsaufruf",
+    0x2062: "Unsichtbares Mal",
+    0x2063: "Unsichtbares Komma",
+    0x2064: "Unsichtbares Plus",
+    0x200E: "Bidi: Links-nach-rechts-Marke",
+    0x200F: "Bidi: Rechts-nach-links-Marke",
+    0x202A: "Bidi: LTR-Einbettung",
+    0x202B: "Bidi: RTL-Einbettung",
+    0x202C: "Bidi: Formatierung beenden",
+    0x202D: "Bidi: LTR-Überschreibung",
+    0x202E: "Bidi: RTL-Überschreibung",
+    0x2066: "Bidi: LTR-Isolat",
+    0x2067: "Bidi: RTL-Isolat",
+    0x2068: "Bidi: Erstes starkes Isolat",
+    0x2069: "Bidi: Isolat beenden"
+  };
+
+  var SPACES = {
+    0x00A0: "Geschütztes Leerzeichen",
+    0x1680: "Ogham-Leerzeichen",
+    0x2000: "En-Quad", 0x2001: "Em-Quad",
+    0x2002: "Halbgeviert-Leerzeichen", 0x2003: "Geviert-Leerzeichen",
+    0x2004: "Drittelgeviert", 0x2005: "Viertelgeviert", 0x2006: "Sechstelgeviert",
+    0x2007: "Ziffernleerzeichen", 0x2008: "Interpunktionsleerzeichen",
+    0x2009: "Schmales Leerzeichen", 0x200A: "Haarleerzeichen",
+    0x202F: "Schmales geschütztes Leerzeichen",
+    0x205F: "Mittleres mathematisches Leerzeichen",
+    0x3000: "Ideografisches Leerzeichen"
+  };
+
+  var DASHES = {
+    0x2013: ["-", "Halbgeviertstrich"],
+    0x2014: ["-", "Geviertstrich"],
+    0x2015: ["-", "Horizontaler Strich"],
+    0x2012: ["-", "Ziffernstrich"],
+    0x2010: ["-", "Bindestrich"],
+    0x2011: ["-", "Geschützter Bindestrich"],
+    0x2212: ["-", "Minuszeichen"],
+    0x2026: ["...", "Auslassungspunkte"],
+    0x2044: ["/", "Bruchstrich"]
+  };
+
+  var QUOTES = {
+    0x2018: ["'", "Einfaches Anführungszeichen links"],
+    0x2019: ["'", "Einfaches Anführungszeichen rechts"],
+    0x201A: ["'", "Einfaches Anführungszeichen unten"],
+    0x201B: ["'", "Einfaches Anführungszeichen gedreht"],
+    0x201C: ['"', "Anführungszeichen links"],
+    0x201D: ['"', "Anführungszeichen rechts"],
+    0x201E: ['"', "Anführungszeichen unten"],
+    0x201F: ['"', "Anführungszeichen gedreht"],
+    0x2032: ["'", "Prime"],
+    0x2033: ['"', "Doppel-Prime"],
+    0x00AB: ['"', "Guillemet links"],
+    0x00BB: ['"', "Guillemet rechts"]
+  };
+
+  var input = document.getElementById("input");
+  var viewClean = document.getElementById("view-clean");
+  var viewScan = document.getElementById("view-scan");
+  var findingsEl = document.getElementById("findings");
+  var verdict = document.getElementById("verdict");
+  var verdictCount = document.getElementById("verdict-count");
+  var verdictText = document.getElementById("verdict-text");
+  var mBefore = document.getElementById("m-before");
+  var mAfter = document.getElementById("m-after");
+  var mWords = document.getElementById("m-words");
+  var copyBtn = document.getElementById("btn-copy");
+
+  var rules = {
+    invisible: document.getElementById("r-invisible"),
+    space: document.getElementById("r-space"),
+    dash: document.getElementById("r-dash"),
+    quote: document.getElementById("r-quote"),
+    ws: document.getElementById("r-ws")
+  };
+
+  function hex(cp) {
+    var s = cp.toString(16).toUpperCase();
+    while (s.length < 4) s = "0" + s;
+    return "U+" + s;
+  }
+
+  function isTagChar(cp) { return cp >= 0xE0000 && cp <= 0xE007F; }
+  function isVariationSelector(cp) {
+    return (cp >= 0xFE00 && cp <= 0xFE0F) || (cp >= 0xE0100 && cp <= 0xE01EF);
+  }
+
+  function classify(cp) {
+    if (INVISIBLE[cp]) return { kind: "invisible", rule: "invisible", name: INVISIBLE[cp], out: "" };
+    if (isTagChar(cp)) return { kind: "invisible", rule: "invisible", name: "Tag-Zeichen (versteckte Nutzdaten)", out: "" };
+    if (isVariationSelector(cp)) return { kind: "invisible", rule: "invisible", name: "Variationsselektor", out: "" };
+    if (SPACES[cp]) return { kind: "swap", rule: "space", name: SPACES[cp], out: " " };
+    if (DASHES[cp]) return { kind: "swap", rule: "dash", name: DASHES[cp][1], out: DASHES[cp][0] };
+    if (QUOTES[cp]) return { kind: "swap", rule: "quote", name: QUOTES[cp][1], out: QUOTES[cp][0] };
+    return null;
+  }
+
+  function tidyWhitespace(text) {
+    return text
+      .replace(/[ \t]+$/gm, "")
+      .replace(/[ ]{2,}/g, " ")
+      .replace(/\r\n?/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .replace(/^\n+|\n+$/g, "");
+  }
+
+  function process(text) {
+    var out = [];
+    var scan = [];
+    var counts = new Map();
+    var removed = 0;
+    var buffer = "";
+
+    function flush() {
+      if (buffer) { scan.push({ t: "text", v: buffer }); buffer = ""; }
+    }
+
+    var chars = Array.from(text);
+    for (var i = 0; i < chars.length; i++) {
+      var ch = chars[i];
+      var cp = ch.codePointAt(0);
+      var hit = classify(cp);
+
+      if (!hit || !rules[hit.rule].checked) {
+        out.push(ch);
+        buffer += ch;
+        continue;
+      }
+
+      out.push(hit.out);
+      removed++;
+
+      var key = hex(cp);
+      var entry = counts.get(key);
+      if (entry) { entry.n++; }
+      else { counts.set(key, { n: 1, kind: hit.kind, name: hit.name, code: key }); }
+
+      flush();
+      scan.push({ t: "mark", kind: hit.kind, code: key, name: hit.name });
+    }
+    flush();
+
+    var cleaned = out.join("");
+    if (rules.ws.checked) cleaned = tidyWhitespace(cleaned);
+
+    return {
+      cleaned: cleaned,
+      scan: scan,
+      counts: Array.from(counts.values()).sort(function (a, b) { return b.n - a.n; }),
+      removed: removed
+    };
+  }
+
+  function renderScan(parts) {
+    viewScan.textContent = "";
+    var frag = document.createDocumentFragment();
+    parts.forEach(function (p) {
+      if (p.t === "text") {
+        frag.appendChild(document.createTextNode(p.v));
+      } else {
+        var el = document.createElement("span");
+        el.className = "mark";
+        el.dataset.kind = p.kind;
+        el.textContent = p.code.replace("U+", "");
+        el.title = p.code + " · " + p.name;
+        frag.appendChild(el);
+      }
+    });
+    viewScan.appendChild(frag);
+  }
+
+  function renderFindings(counts) {
+    findingsEl.textContent = "";
+    counts.forEach(function (c) {
+      var el = document.createElement("span");
+      el.className = "finding";
+      el.dataset.kind = c.kind;
+
+      var code = document.createElement("span");
+      code.className = "code";
+      code.textContent = c.code;
+
+      var name = document.createElement("span");
+      name.textContent = c.name;
+
+      var n = document.createElement("span");
+      n.className = "n";
+      n.textContent = "×" + c.n;
+
+      el.append(code, name, n);
+      findingsEl.appendChild(el);
+    });
+  }
+
+  function countWords(text) {
+    var t = text.trim();
+    return t ? t.split(/\s+/).length : 0;
+  }
+
+  function update() {
+    var text = input.value;
+    var res = process(text);
+
+    viewClean.textContent = res.cleaned;
+    renderScan(res.scan);
+    renderFindings(res.counts);
+
+    mBefore.textContent = Array.from(text).length.toLocaleString("de-DE");
+    mAfter.textContent = Array.from(res.cleaned).length.toLocaleString("de-DE");
+    mWords.textContent = countWords(res.cleaned).toLocaleString("de-DE");
+
+    verdictCount.textContent = res.removed.toLocaleString("de-DE");
+    verdict.dataset.clean = res.removed === 0 ? "true" : "false";
+
+    if (!text) {
+      verdictCount.textContent = "0";
+      verdictText.textContent = "Noch kein Text eingefügt.";
+    } else if (res.removed === 0) {
+      verdictText.textContent = "Der Text ist sauber – keine auffälligen Zeichen gefunden.";
+    } else {
+      verdictText.textContent = res.removed === 1
+        ? "auffälliges Zeichen bereinigt"
+        : "auffällige Zeichen bereinigt";
+    }
+
+    copyBtn.dataset.done = "false";
+    copyBtn.textContent = "Kopieren";
+  }
+
+  var tabClean = document.getElementById("tab-clean");
+  var tabScan = document.getElementById("tab-scan");
+
+  function selectTab(which) {
+    var cleanActive = which === "clean";
+    tabClean.setAttribute("aria-selected", String(cleanActive));
+    tabScan.setAttribute("aria-selected", String(!cleanActive));
+    viewClean.hidden = !cleanActive;
+    viewScan.hidden = cleanActive;
+  }
+
+  tabClean.addEventListener("click", function () { selectTab("clean"); });
+  tabScan.addEventListener("click", function () { selectTab("scan"); });
+
+  copyBtn.addEventListener("click", function () {
+    var text = viewClean.textContent;
+    if (!text) return;
+
+    function done() {
+      copyBtn.dataset.done = "true";
+      copyBtn.textContent = "Kopiert";
+      setTimeout(function () {
+        copyBtn.dataset.done = "false";
+        copyBtn.textContent = "Kopieren";
+      }, 1600);
+    }
+
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); done(); }
+      catch (e) { copyBtn.textContent = "Bitte manuell kopieren"; }
+      document.body.removeChild(ta);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  document.getElementById("btn-clear").addEventListener("click", function () {
+    input.value = "";
+    input.focus();
+    update();
+  });
+
+  document.getElementById("btn-sample").addEventListener("click", function () {
+    // Unsichtbare Zeichen bewusst als Escape-Sequenz, damit sie keinen
+    // Editor- oder Kopiervorgang verlieren können.
+    input.value =
+      "Der Bericht zeigt \u2013 wie erwartet \u2013 einen Anstieg von 12\u202F%.\u200B\n" +
+      "\u201EWichtig\u201C ist dabei vor allem eins: die Daten\u2026 sie sprechen f\u00FCr sich.\n\n" +
+      "Kernpunkte\u2014kurz gefasst:\n" +
+      "\u2022 Umsatz\u00A0+8\u2009%\u200D\n" +
+      "\u2022 Kosten\u00A0\u22125\u2009%\uFE0F   \n";
+    update();
+    input.focus();
+  });
+
+  input.addEventListener("input", update);
+  Object.keys(rules).forEach(function (k) {
+    rules[k].addEventListener("change", update);
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>

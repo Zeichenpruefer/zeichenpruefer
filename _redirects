@@ -1,0 +1,12 @@
+# Ausnahme zuerst: Die Google-Bestätigungsdatei der alten Property muss unter
+# der alten Adresse erreichbar bleiben, bis die Adressänderung gemeldet ist.
+https://klartext-gpt.netlify.app/googleb631979e82b13282.html  /googleb631979e82b13282.html  200
+
+# Alte Netlify-Adresse dauerhaft auf die Hauptdomain
+https://klartext-gpt.netlify.app/*  https://zeichenpruefer.de/:splat  301!
+
+# Umlautdomain dauerhaft auf die Hauptdomain
+https://xn--zeichenprfer-llb.de/*  https://zeichenpruefer.de/:splat  301!
+
+# www dauerhaft auf die Hauptdomain
+https://www.zeichenpruefer.de/*  https://zeichenpruefer.de/:splat  301!

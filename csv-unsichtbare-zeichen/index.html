@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>CSV-Import kaputt: BOM und unsichtbare Zeichen entfernen</title>
+<meta name="description" content="Erste Spalte nicht erkannt oder Umlaute zerschossen? Meist ist das BOM schuld. So erkennst und entfernst du es in Excel, VS Code und Python.">
+
+<link rel="canonical" href="https://zeichenpruefer.de/csv-unsichtbare-zeichen/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Zeichenprüfer">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="CSV-Import kaputt: BOM und unsichtbare Zeichen entfernen">
+<meta property="og:description" content="Warum die erste Spalte nie erkannt wird und wie du das Byte-Order-Mark in Excel, VS Code oder Python loswirst.">
+<meta property="og:url" content="https://zeichenpruefer.de/csv-unsichtbare-zeichen/">
+<meta property="og:image" content="https://zeichenpruefer.de/og-csv.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CSV-Import und unsichtbare Zeichen">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CSV-Import kaputt: BOM und unsichtbare Zeichen">
+<meta name="twitter:description" content="Erste Spalte nicht erkannt, Umlaute zerschossen – so entfernst du das Byte-Order-Mark.">
+<meta name="twitter:image" content="https://zeichenpruefer.de/og-csv.png">
+
+<meta name="theme-color" content="#EBEDF2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1015" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B44E0'/%3E%3Ctext x='16' y='23' font-family='ui-monospace,monospace' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Zeichenprüfer", "item": "https://zeichenpruefer.de/" },
+        { "@type": "ListItem", "position": 2, "name": "CSV und unsichtbare Zeichen", "item": "https://zeichenpruefer.de/csv-unsichtbare-zeichen/" }
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "CSV-Import kaputt: das unsichtbare Zeichen am Dateianfang",
+      "description": "Ursachen und Lösungen für fehlerhafte CSV-Importe durch Byte-Order-Mark, geschützte Leerzeichen und falsche Zeichenkodierung.",
+      "inLanguage": "de",
+      "url": "https://zeichenpruefer.de/csv-unsichtbare-zeichen/",
+      "image": "https://zeichenpruefer.de/og-csv.png",
+      "dateModified": "2026-08-12",
+      "isPartOf": { "@type": "WebSite", "name": "Zeichenprüfer", "url": "https://zeichenpruefer.de/" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was ist ein BOM in einer CSV-Datei?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Das Byte-Order-Mark ist ein unsichtbares Zeichen mit dem Codepoint U+FEFF am Anfang einer Datei. Es signalisiert Programmen, dass die Datei UTF-8 kodiert ist. Excel braucht es, um Umlaute korrekt anzuzeigen, während viele Programmierschnittstellen daran scheitern." }
+        },
+        {
+          "@type": "Question",
+          "name": "Warum wird die erste Spalte meiner CSV-Datei nicht erkannt?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Weil das BOM unsichtbar an der ersten Spaltenüberschrift klebt. Aus dem Namen Kunde wird technisch das BOM gefolgt von Kunde, und jeder Abgleich auf den Spaltennamen schlägt fehl, obwohl die Überschrift korrekt aussieht." }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie entferne ich das BOM aus einer CSV-Datei?",
+          "acceptedAnswer": { "@type": "Answer", "text": "In VS Code klickst du unten rechts auf die Kodierungsanzeige, wählst Save with Encoding und dann UTF-8 ohne BOM. In Python liest du die Datei mit der Kodierung utf-8-sig ein, die das BOM automatisch entfernt." }
+        },
+        {
+          "@type": "Question",
+          "name": "Warum zeigt Excel bei meiner CSV-Datei falsche Umlaute?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Weil Excel die Datei ohne BOM nicht als UTF-8 erkennt und stattdessen die Windows-Kodierung annimmt. Aus ä wird dann ä. Speichere die Datei als UTF-8 mit BOM oder importiere sie über Daten, Aus Text mit ausdrücklicher Angabe der Kodierung." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+  :root {
+    --ground: #EBEDF2;
+    --surface: #FFFFFF;
+    --surface-2: #F4F6FA;
+    --line: #D6DAE4;
+    --line-soft: #E4E7EE;
+    --ink: #14161D;
+    --ink-2: #565D70;
+    --ink-3: #868DA0;
+    --accent: #2B44E0;
+    --accent-ink: #FFFFFF;
+    --accent-soft: rgba(43, 68, 224, .10);
+    --flag: #B94A15;
+    --flag-soft: rgba(185, 74, 21, .12);
+    --ok: #10704F;
+    --ok-soft: rgba(16, 112, 79, .12);
+    --shadow: 0 1px 2px rgba(20,22,29,.06), 0 8px 24px -12px rgba(20,22,29,.18);
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0E1015; --surface: #161922; --surface-2: #1B1F29;
+      --line: #2B303C; --line-soft: #232833;
+      --ink: #E7E9F0; --ink-2: #A2A9BA; --ink-3: #6E7688;
+      --accent: #8093FF; --accent-ink: #0E1015; --accent-soft: rgba(128,147,255,.14);
+      --flag: #F1874A; --flag-soft: rgba(241,135,74,.16);
+      --ok: #56C398; --ok-soft: rgba(86,195,152,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0E1015; --surface: #161922; --surface-2: #1B1F29;
+    --line: #2B303C; --line-soft: #232833;
+    --ink: #E7E9F0; --ink-2: #A2A9BA; --ink-3: #6E7688;
+    --accent: #8093FF; --accent-ink: #0E1015; --accent-soft: rgba(128,147,255,.14);
+    --flag: #F1874A; --flag-soft: rgba(241,135,74,.16);
+    --ok: #56C398; --ok-soft: rgba(86,195,152,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 26px 20px 70px; }
+
+  .crumbs { font-size: 12.5px; color: var(--ink-3); margin-bottom: 22px; }
+  .crumbs a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .crumbs a:hover { color: var(--accent); border-color: var(--accent); }
+  .crumbs span { margin: 0 7px; }
+
+  h1 {
+    margin: 0 0 12px;
+    font-family: var(--mono);
+    font-size: clamp(25px, 4.2vw, 34px);
+    font-weight: 600;
+    letter-spacing: -.035em;
+    line-height: 1.16;
+    text-wrap: balance;
+  }
+
+  .standfirst { margin: 0 0 24px; color: var(--ink-2); font-size: 16.5px; max-width: 66ch; }
+
+  h2 {
+    margin: 46px 0 10px;
+    font-family: var(--mono);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    scroll-margin-top: 18px;
+    text-wrap: balance;
+  }
+
+  h3 { margin: 24px 0 6px; font-size: 15.5px; font-weight: 600; }
+
+  p { max-width: 68ch; margin: 0 0 12px; color: var(--ink-2); }
+  p strong { color: var(--ink); font-weight: 600; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--accent); }
+
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  kbd {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 2px 7px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* Sofortlösung */
+
+  .solution {
+    margin: 0 0 26px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ok);
+    border-radius: 11px;
+    background: var(--surface);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .solution h2 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-family: var(--sans);
+    letter-spacing: 0;
+    color: var(--ok);
+  }
+
+  .solution ol { margin: 0; padding-left: 20px; }
+  .solution li { margin-bottom: 7px; color: var(--ink-2); }
+  .solution li:last-child { margin-bottom: 0; }
+  .solution li strong { color: var(--ink); }
+
+  /* Werkzeug */
+
+  .tool {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin: 16px 0 10px;
+  }
+
+  .tool-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    padding: 11px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .tool-title { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .tool-stat { font-size: 13px; color: var(--ink-2); }
+  .tool-stat b { font-family: var(--mono); color: var(--flag); font-variant-numeric: tabular-nums; }
+  .tool-stat[data-clean="true"] b { color: var(--ok); }
+
+  textarea {
+    width: 100%; display: block; border: 0;
+    padding: 14px; min-height: 120px; resize: vertical;
+    font-family: var(--mono); font-size: 13px; line-height: 1.65;
+    background: var(--surface); color: var(--ink);
+  }
+
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+  textarea::placeholder { color: var(--ink-3); }
+
+  .tool-foot {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 11px 14px;
+    border-top: 1px solid var(--line-soft);
+    background: var(--surface-2);
+  }
+
+  .btn {
+    font: inherit; font-size: 13px; padding: 6px 13px;
+    border-radius: 7px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink-2); cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+
+  .btn:hover { color: var(--ink); border-color: var(--ink-3); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
+  .btn.primary[data-done="true"] { background: var(--ok); border-color: var(--ok); }
+  .tool-note { font-size: 12.5px; color: var(--ink-3); margin-left: auto; }
+
+  /* Tabelle */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    margin-top: 16px;
+  }
+
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 13.5px; }
+
+  th, td { text-align: left; padding: 10px 15px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+
+  thead th {
+    font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); background: var(--surface-2); font-weight: 600; white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: 0; }
+  td { color: var(--ink-2); }
+  td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+
+  .faq-q { margin-top: 22px; }
+  .faq-q h3 { margin-bottom: 4px; }
+
+  /* Weiterführend */
+
+  .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 18px; }
+
+  .related a {
+    display: block;
+    padding: 15px 17px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    text-decoration: none;
+    transition: border-color .15s;
+  }
+
+  .related a:hover { border-color: var(--accent); }
+  .related b { display: block; color: var(--ink); font-size: 14.5px; margin-bottom: 3px; }
+  .related span { color: var(--ink-2); font-size: 13px; }
+
+  footer.bottom {
+    margin-top: 50px; padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-3); font-size: 13px;
+  }
+
+  footer.bottom p { color: var(--ink-3); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<nav class="crumbs" aria-label="Brotkrumennavigation">
+  <a href="/">Zeichenprüfer</a><span>›</span>CSV und unsichtbare Zeichen
+</nav>
+
+<h1>CSV-Import kaputt: das unsichtbare Zeichen am Dateianfang</h1>
+<p class="standfirst">Die erste Spalte wird nicht erkannt. Umlaute erscheinen als Buchstabensalat. Der JSON-Parser bricht bei Position 0 ab, wo scheinbar nichts steht. Drei Symptome, eine Ursache — und leider eine, die je nach Zielprogramm genau gegenteilig behandelt werden muss.</p>
+
+<main>
+
+<div class="solution">
+  <h2>Die schnelle Diagnose</h2>
+  <ol>
+    <li>Öffne die Datei in <strong>VS Code</strong> und schau unten rechts in die Statusleiste.</li>
+    <li>Steht dort <code>UTF-8 mit BOM</code>, hast du die Ursache gefunden.</li>
+    <li>Klick auf die Anzeige, wähle <strong>Save with Encoding</strong> und dann <strong>UTF-8</strong> ohne Zusatz.</li>
+    <li>Datei speichern und erneut importieren.</li>
+  </ol>
+</div>
+
+<h2 id="was">Was das BOM ist und warum es existiert</h2>
+<p>Das <strong>Byte-Order-Mark</strong> ist ein unsichtbares Zeichen mit dem Codepoint <code>U+FEFF</code>, das ganz am Anfang einer Datei steht. Sein Zweck ist eine Ansage an das lesende Programm: „Diese Datei ist UTF-8 kodiert." Ohne diesen Hinweis muss jedes Programm raten, und Windows rät traditionell falsch.</p>
+<p>Damit ist das BOM kein Fehler, sondern eine Hilfe — im richtigen Kontext. Das Problem entsteht daraus, dass zwei Welten unterschiedliche Erwartungen haben: <strong>Excel will das BOM</strong>, um Umlaute korrekt darzustellen. <strong>Programmierschnittstellen wollen es nicht</strong>, weil es für sie ein normales Zeichen im Datenstrom ist.</p>
+
+<h2 id="symptome">Die drei Symptome</h2>
+
+<h3>Die erste Spalte wird nicht gefunden</h3>
+<p>Deine CSV-Datei hat die Überschriften <code>Kunde;Umsatz;Datum</code>, und dein Skript findet die Spalte <code>Kunde</code> nicht. Technisch heißt sie nämlich <code>\uFEFFKunde</code> — das BOM klebt am ersten Wert. Auf dem Bildschirm ist davon nichts zu sehen.</p>
+<p>Das ist der heimtückischste Fall, weil alles korrekt aussieht. Ein Abgleich mit <code>if spalte == "Kunde"</code> schlägt fehl, obwohl beide Zeichenfolgen identisch wirken.</p>
+
+<h3>Umlaute werden zu Buchstabensalat</h3>
+<p>Aus <code>Müller</code> wird <code>MÃ¼ller</code>, aus <code>Straße</code> wird <code>StraÃŸe</code>. Hier ist es genau umgekehrt: Das BOM <em>fehlt</em>, und Excel hat die Datei deshalb als Windows-Kodierung statt als UTF-8 gelesen. Die Lösung ist nicht, das BOM zu entfernen, sondern es hinzuzufügen.</p>
+
+<h3>Der Parser bricht bei Zeichen 0 ab</h3>
+<p>Meldungen wie <code>Unexpected token in JSON at position 0</code> oder <code>Invalid character</code> deuten fast immer auf das BOM. Der Parser erwartet an erster Stelle eine geschweifte Klammer und findet ein unsichtbares Zeichen.</p>
+
+<h2 id="entfernen">Das BOM entfernen</h2>
+
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Programm</th>
+        <th scope="col">Vorgehen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>VS Code</td><td>Kodierung in der Statusleiste anklicken › <strong>Save with Encoding</strong> › <code>UTF-8</code></td></tr>
+      <tr><td>Notepad++</td><td>Menü <strong>Kodierung</strong> › <strong>UTF-8</strong> (nicht „UTF-8 BOM")</td></tr>
+      <tr><td>Python</td><td>Beim Lesen <code>encoding="utf-8-sig"</code> statt <code>utf-8</code> — entfernt das BOM automatisch</td></tr>
+      <tr><td>PowerShell</td><td><code>Set-Content -Encoding utf8NoBOM</code> beim Schreiben</td></tr>
+      <tr><td>Kommandozeile</td><td><code>sed -i '1s/^\uFEFF//' datei.csv</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>Der Python-Weg ist der eleganteste, weil er nichts an der Datei ändert: <code>utf-8-sig</code> liest ein vorhandenes BOM und verwirft es, funktioniert aber genauso mit Dateien ohne BOM. Damit läuft dasselbe Skript für beide Varianten.</p>
+
+<h2 id="hinzufuegen">Das BOM hinzufügen — wenn Excel Umlaute zerstört</h2>
+<p>Der umgekehrte Fall: Du exportierst eine CSV-Datei, und beim Öffnen in Excel sind alle Umlaute zerschossen. Dann fehlt das BOM, und Excel braucht es.</p>
+<p>In Python schreibst du die Datei dafür mit <code>encoding="utf-8-sig"</code> — dieselbe Kodierung, die beim Lesen entfernt, fügt beim Schreiben hinzu. In VS Code wählst du bei <strong>Save with Encoding</strong> die Variante <code>UTF-8 with BOM</code>.</p>
+<p>Alternativ umgehst du das Problem beim Öffnen: <strong>Daten</strong> › <strong>Aus Text/CSV</strong> in Excel, dort die Kodierung ausdrücklich auf <code>65001: Unicode (UTF-8)</code> stellen. Der Doppelklick auf die Datei nimmt diesen Weg nicht und rät stattdessen.</p>
+
+<h2 id="werkzeug">Zellinhalte prüfen und bereinigen</h2>
+<p>Nicht jedes CSV-Problem kommt vom BOM. Häufig stecken geschützte Leerzeichen in den Werten selbst, etwa als Tausendertrennzeichen in Zahlen. Füge eine verdächtige Zeile hier ein — die Auswertung zeigt sofort, ob und wie viele auffällige Zeichen enthalten sind:</p>
+
+<section class="tool" aria-label="Text bereinigen">
+  <div class="tool-head">
+    <span class="tool-title">CSV-Zeile prüfen</span>
+    <span class="tool-stat" id="stat" data-clean="true">Noch nichts eingefügt</span>
+  </div>
+  <label for="in" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Text einfügen</label>
+  <textarea id="in" spellcheck="false" placeholder="Kopfzeile oder Datenzeile hier einfügen…"></textarea>
+  <div class="tool-foot">
+    <button class="btn primary" type="button" id="copy">Bereinigt kopieren</button>
+    <button class="btn" type="button" id="clear">Leeren</button>
+    <span class="tool-note">Nichts wird hochgeladen</span>
+  </div>
+</section>
+
+<h2 id="weitere">Die anderen üblichen CSV-Fallen</h2>
+
+<h3>Das Trennzeichen</h3>
+<p>Excel in deutscher Spracheinstellung erwartet das <strong>Semikolon</strong> als Spaltentrenner, der internationale Standard ist das <strong>Komma</strong>. Öffnest du eine kommagetrennte Datei per Doppelklick, landet alles in einer einzigen Spalte. Der Umweg über <strong>Daten</strong> › <strong>Aus Text/CSV</strong> löst auch das, weil du dort das Trennzeichen selbst wählst.</p>
+
+<h3>Zahlen als Text</h3>
+<p>Werte wie <code>1 234,50</code> mit geschütztem Leerzeichen als Tausendertrennzeichen liest Excel als Text und rechnet nicht damit. Wie du das reparierst, steht ausführlich auf der <a href="/geschuetztes-leerzeichen-excel/">Excel-Seite</a>.</p>
+
+<h3>Führende Nullen verschwinden</h3>
+<p>Postleitzahlen wie <code>01067</code> werden beim Import zu <code>1067</code>, weil Excel sie als Zahl interpretiert. Das ist kein Zeichenproblem, sondern eine Typumwandlung — im Importdialog lässt sich die Spalte ausdrücklich als <strong>Text</strong> deklarieren.</p>
+
+<h2 id="faq">Häufige Fragen</h2>
+
+<div class="faq-q">
+  <h3>Woran erkenne ich, ob eine Datei ein BOM hat?</h3>
+  <p>In VS Code steht es in der Statusleiste unten rechts. Auf der Kommandozeile zeigt <code>file datei.csv</code> unter Linux und macOS den Hinweis „UTF-8 Unicode (with BOM) text". Ein Editor ohne Kodierungsanzeige verrät es nicht — das Zeichen ist unsichtbar.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Soll ich das BOM nun setzen oder nicht?</h3>
+  <p>Das hängt allein davon ab, wer die Datei liest. Landet sie in Excel und wird von Menschen geöffnet: mit BOM. Wird sie von einem Skript, einer Schnittstelle oder einer Datenbank verarbeitet: ohne. Eine allgemein richtige Antwort gibt es nicht, und genau daraus entsteht das ganze Durcheinander.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Meine Datei sieht im Editor sauber aus, das Skript scheitert trotzdem</h3>
+  <p>Dann steckt das Problem in den Werten statt am Dateianfang. Kopiere die betroffene Zeile in das Werkzeug oben. Häufige Kandidaten sind geschützte Leerzeichen in Zahlen und breitenlose Leerzeichen aus kopierten Webinhalten.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Warum macht Excel das überhaupt so kompliziert?</h3>
+  <p>Weil das CSV-Format nie standardisiert wurde. Es gibt keine verbindliche Regel für Kodierung, Trennzeichen oder Zeilenenden — jedes Programm trifft eigene Annahmen. Das BOM ist der Versuch, wenigstens die Kodierungsfrage zu klären, und schafft dabei ein neues Problem an anderer Stelle.</p>
+</div>
+
+<h2>Weiterführend</h2>
+<div class="related">
+  <a href="/unicode-zeichen/">
+    <b>Nachschlagewerk unsichtbare Zeichen</b>
+    <span>Alle Codepoints mit Herkunft, Symptomen und Befehlen</span>
+  </a>
+  <a href="/geschuetztes-leerzeichen-excel/">
+    <b>Excel rechnet nicht</b>
+    <span>Warum GLÄTTEN versagt und welche Formel hilft</span>
+  </a>
+  <a href="/geschuetztes-leerzeichen-word/">
+    <b>Dasselbe Problem in Word</b>
+    <span>Formatierungszeichen sichtbar machen und ersetzen</span>
+  </a>
+  <a href="/chatgpt-wasserzeichen/">
+    <b>KI-Texte und Wasserzeichen</b>
+    <span>Was in ChatGPT-Texten wirklich steckt – und was das Entfernen leistet</span>
+  </a>
+  <a href="/claude-wasserzeichen/">
+    <b>Claude-Wasserzeichen</b>
+    <span>Warum es echt ist, aber von keinem Zeichen-Werkzeug entfernt wird</span>
+  </a>
+  <a href="/ki-texte-erkennen/">
+    <b>KI-Texte erkennen</b>
+    <span>Was funktioniert, was nicht – mit Rechner zu den Fehlalarmen</span>
+  </a>
+</div>
+
+</main>
+
+<footer class="bottom">
+  <p>Zurück zum <a href="/">vollständigen Werkzeug</a> mit Analyse-Ansicht und einzeln zuschaltbaren Regeln. Alles läuft im Browser, ohne Upload und ohne Registrierung.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var INVIS = /[\u200B-\u200D\u2060\uFEFF\u00AD\u034F\u061C\u180E\u2061-\u2064\u200E\u200F\u202A-\u202E\u2066-\u2069\uFE00-\uFE0F]/g;
+  var TAGS = /[\u{E0000}-\u{E007F}]/gu;
+  var SPACE = /[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g;
+  var DASH = /[\u2010-\u2015\u2212]/g;
+  var ELL = /\u2026/g;
+
+  var input = document.getElementById("in");
+  var stat = document.getElementById("stat");
+  var copyBtn = document.getElementById("copy");
+
+  function clean(text) {
+    return text
+      .replace(TAGS, "")
+      .replace(INVIS, "")
+      .replace(SPACE, " ")
+      .replace(DASH, "-")
+      .replace(ELL, "...")
+      .replace(/[ \t]+$/gm, "")
+      .replace(/[ ]{2,}/g, " ");
+  }
+
+  function count(text) {
+    var n = 0;
+    [INVIS, TAGS, SPACE, DASH, ELL].forEach(function (re) {
+      var m = text.match(re);
+      if (m) n += m.length;
+    });
+    return n;
+  }
+
+  function update() {
+    var text = input.value;
+    if (!text) {
+      stat.textContent = "Noch nichts eingefügt";
+      stat.dataset.clean = "true";
+      return;
+    }
+    var n = count(text);
+    stat.dataset.clean = n === 0 ? "true" : "false";
+    stat.innerHTML = n === 0
+      ? "<b>Sauber</b> – keine auffälligen Zeichen"
+      : "<b>" + n + "</b> auffällige" + (n === 1 ? "s" : "") + " Zeichen gefunden";
+  }
+
+  input.addEventListener("input", update);
+
+  document.getElementById("clear").addEventListener("click", function () {
+    input.value = "";
+    input.focus();
+    update();
+  });
+
+  copyBtn.addEventListener("click", function () {
+    var text = clean(input.value);
+    if (!text) return;
+    function done() {
+      copyBtn.dataset.done = "true";
+      copyBtn.textContent = "Kopiert";
+      setTimeout(function () {
+        copyBtn.dataset.done = "false";
+        copyBtn.textContent = "Bereinigt kopieren";
+      }, 1600);
+    }
+    function fehlgeschlagen() {
+      copyBtn.textContent = "Bitte manuell kopieren";
+      setTimeout(function () { copyBtn.textContent = "Bereinigt kopieren"; }, 2500);
+    }
+
+    function ersatzweg() {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy") ? done() : fehlgeschlagen(); }
+      catch (e) { fehlgeschlagen(); }
+      document.body.removeChild(ta);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, ersatzweg);
+    } else {
+      ersatzweg();
+    }
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>

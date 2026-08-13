@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Unsichtbare Unicode-Zeichen: Liste mit Codepoints und Lösung</title>
+<meta name="description" content="U+00A0, U+202F, U+200B, U+FEFF und mehr: woran du unsichtbare Zeichen erkennst, was sie kaputt machen und wie du sie in Word, Excel oder VS Code entfernst.">
+
+<link rel="canonical" href="https://zeichenpruefer.de/unicode-zeichen/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Zeichenprüfer">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Unsichtbare Unicode-Zeichen: Liste mit Codepoints und Lösung">
+<meta property="og:description" content="Nachschlagewerk für unsichtbare Zeichen – mit Herkunft, Symptomen und dem passenden Suchen-und-Ersetzen-Befehl für Word, Excel und VS Code.">
+<meta property="og:url" content="https://zeichenpruefer.de/unicode-zeichen/">
+<meta property="og:image" content="https://zeichenpruefer.de/og-unicode.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Unsichtbare Unicode-Zeichen – Nachschlagewerk">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Unsichtbare Unicode-Zeichen: Liste mit Codepoints und Lösung">
+<meta name="twitter:description" content="Woran du unsichtbare Zeichen erkennst, was sie kaputt machen und wie du sie entfernst.">
+<meta name="twitter:image" content="https://zeichenpruefer.de/og-unicode.png">
+
+<meta name="theme-color" content="#EBEDF2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1015" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B44E0'/%3E%3Ctext x='16' y='23' font-family='ui-monospace,monospace' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Zeichenprüfer", "item": "https://zeichenpruefer.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Unsichtbare Unicode-Zeichen", "item": "https://zeichenpruefer.de/unicode-zeichen/" }
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Unsichtbare Unicode-Zeichen erkennen und entfernen",
+      "description": "Nachschlagewerk für unsichtbare Unicode-Zeichen mit Herkunft, Symptomen und Entfernungsanleitung für Word, Excel und VS Code.",
+      "inLanguage": "de",
+      "url": "https://zeichenpruefer.de/unicode-zeichen/",
+      "image": "https://zeichenpruefer.de/og-unicode.png",
+      "dateModified": "2026-08-12",
+      "isPartOf": { "@type": "WebSite", "name": "Zeichenprüfer", "url": "https://zeichenpruefer.de/" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was ist U+202F?",
+          "acceptedAnswer": { "@type": "Answer", "text": "U+202F ist das schmale geschützte Leerzeichen, englisch Narrow No-Break Space. Es ist schmaler als ein normales Leerzeichen und verhindert einen Zeilenumbruch. DIN 5008 empfiehlt es zwischen Zahl und Einheit, etwa in 12 % oder 5 kg. In vielen Schriftarten fehlt es, dann erscheint statt eines Abstands ein leeres Rechteck." }
+        },
+        {
+          "@type": "Question",
+          "name": "Was ist U+200B?",
+          "acceptedAnswer": { "@type": "Answer", "text": "U+200B ist das breitenlose Leerzeichen, englisch Zero Width Space. Es markiert eine erlaubte Umbruchstelle, ohne selbst Platz zu belegen. Es ist im Text vorhanden, aber vollständig unsichtbar, und stammt meist aus kopierten Webinhalten." }
+        },
+        {
+          "@type": "Question",
+          "name": "Warum findet die Suche mein Wort nicht, obwohl es dasteht?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Weil zwischen den Buchstaben oder anstelle des Leerzeichens ein unsichtbares Zeichen steht. Für den Computer ist die Zeichenfolge dann eine andere als die eingetippte Suchanfrage, obwohl beide auf dem Bildschirm identisch aussehen." }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie entferne ich ein geschütztes Leerzeichen in Excel?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Die Funktion GLÄTTEN entfernt geschützte Leerzeichen nicht. Ersetze sie zuerst mit WECHSELN(A1;ZEICHEN(160);\" \") und wende danach GLÄTTEN an. Für das schmale geschützte Leerzeichen U+202F lautet die Formel WECHSELN(A1;UNIZEICHEN(8239);\" \")." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+  :root {
+    --ground: #EBEDF2;
+    --surface: #FFFFFF;
+    --surface-2: #F4F6FA;
+    --line: #D6DAE4;
+    --line-soft: #E4E7EE;
+    --ink: #14161D;
+    --ink-2: #565D70;
+    --ink-3: #868DA0;
+    --accent: #2B44E0;
+    --accent-ink: #FFFFFF;
+    --accent-soft: rgba(43, 68, 224, .10);
+    --flag: #B94A15;
+    --flag-soft: rgba(185, 74, 21, .12);
+    --swap: #0D6E7C;
+    --swap-soft: rgba(13, 110, 124, .12);
+    --ok: #10704F;
+    --shadow: 0 1px 2px rgba(20,22,29,.06), 0 8px 24px -12px rgba(20,22,29,.18);
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0E1015;
+      --surface: #161922;
+      --surface-2: #1B1F29;
+      --line: #2B303C;
+      --line-soft: #232833;
+      --ink: #E7E9F0;
+      --ink-2: #A2A9BA;
+      --ink-3: #6E7688;
+      --accent: #8093FF;
+      --accent-ink: #0E1015;
+      --accent-soft: rgba(128,147,255,.14);
+      --flag: #F1874A;
+      --flag-soft: rgba(241,135,74,.16);
+      --swap: #55C6D2;
+      --swap-soft: rgba(85,198,210,.14);
+      --ok: #56C398;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0E1015;
+    --surface: #161922;
+    --surface-2: #1B1F29;
+    --line: #2B303C;
+    --line-soft: #232833;
+    --ink: #E7E9F0;
+    --ink-2: #A2A9BA;
+    --ink-3: #6E7688;
+    --accent: #8093FF;
+    --accent-ink: #0E1015;
+    --accent-soft: rgba(128,147,255,.14);
+    --flag: #F1874A;
+    --flag-soft: rgba(241,135,74,.16);
+    --swap: #55C6D2;
+    --swap-soft: rgba(85,198,210,.14);
+    --ok: #56C398;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 26px 20px 70px; }
+
+  /* Brotkrumen */
+
+  .crumbs {
+    font-size: 12.5px;
+    color: var(--ink-3);
+    margin-bottom: 22px;
+  }
+
+  .crumbs a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .crumbs a:hover { color: var(--accent); border-color: var(--accent); }
+  .crumbs span { margin: 0 7px; }
+
+  h1 {
+    margin: 0 0 12px;
+    font-family: var(--mono);
+    font-size: clamp(26px, 4.4vw, 36px);
+    font-weight: 600;
+    letter-spacing: -.035em;
+    line-height: 1.14;
+    text-wrap: balance;
+  }
+
+  .standfirst { margin: 0 0 26px; color: var(--ink-2); font-size: 16.5px; max-width: 66ch; }
+
+  h2 {
+    margin: 48px 0 10px;
+    font-family: var(--mono);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    scroll-margin-top: 20px;
+    text-wrap: balance;
+  }
+
+  h3 { margin: 26px 0 6px; font-size: 15.5px; font-weight: 600; }
+
+  p { max-width: 68ch; margin: 0 0 12px; color: var(--ink-2); }
+  p strong { color: var(--ink); font-weight: 600; }
+  p:last-child { margin-bottom: 0; }
+
+  a { color: var(--accent); }
+
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* Werkzeug */
+
+  .tool {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .tool-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 11px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .tool-title {
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+  }
+
+  .tool-stat { font-size: 13px; color: var(--ink-2); }
+  .tool-stat b { font-family: var(--mono); color: var(--flag); font-variant-numeric: tabular-nums; }
+  .tool-stat[data-clean="true"] b { color: var(--ok); }
+
+  textarea {
+    width: 100%;
+    display: block;
+    border: 0;
+    padding: 14px;
+    min-height: 130px;
+    resize: vertical;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.65;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+  textarea::placeholder { color: var(--ink-3); }
+
+  .tool-foot {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 11px 14px;
+    border-top: 1px solid var(--line-soft);
+    background: var(--surface-2);
+  }
+
+  .btn {
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 13px;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+
+  .btn:hover { color: var(--ink); border-color: var(--ink-3); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 500;
+  }
+
+  .btn.primary[data-done="true"] { background: var(--ok); border-color: var(--ok); }
+
+  .tool-note { font-size: 12.5px; color: var(--ink-3); margin-left: auto; }
+
+  /* Sprungmarken */
+
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .jump a {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: color .15s, border-color .15s;
+  }
+
+  .jump a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Zeichen-Einträge */
+
+  .entry {
+    margin-top: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    overflow: hidden;
+    scroll-margin-top: 16px;
+  }
+
+  .entry-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 17px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .entry-head h3 {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+
+  .entry-head .name { color: var(--ink-2); font-size: 14.5px; }
+
+  .tag {
+    margin-left: auto;
+    font-size: 10.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .tag[data-k="weg"] { background: var(--flag-soft); color: var(--flag); }
+  .tag[data-k="ersetzt"] { background: var(--swap-soft); color: var(--swap); }
+
+  .entry-body { padding: 15px 17px 17px; }
+  .entry-body p { margin-bottom: 10px; }
+
+  .facts { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 7px 16px; margin: 12px 0 0; }
+
+  .facts dt {
+    font-size: 10.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    padding-top: 2px;
+  }
+
+  .facts dd { margin: 0; color: var(--ink-2); font-size: 14px; }
+
+  /* Rezept-Tabelle */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    margin-top: 16px;
+  }
+
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13.5px; }
+
+  th, td {
+    text-align: left;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+  }
+
+  thead th {
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    background: var(--surface-2);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: 0; }
+  td { color: var(--ink-2); }
+  td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+
+  .faq-q { margin-top: 22px; }
+  .faq-q h3 { margin-bottom: 4px; }
+
+  .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 16px; }
+
+  .related a {
+    display: block; padding: 15px 17px;
+    border: 1px solid var(--line); border-radius: 11px;
+    background: var(--surface); text-decoration: none;
+    transition: border-color .15s;
+  }
+
+  .related a:hover { border-color: var(--accent); }
+  .related b { display: block; color: var(--ink); font-size: 14.5px; margin-bottom: 3px; }
+  .related span { color: var(--ink-2); font-size: 13px; }
+
+  footer.bottom {
+    margin-top: 54px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-3);
+    font-size: 13px;
+  }
+
+  footer.bottom p { color: var(--ink-3); }
+
+  @media (max-width: 560px) {
+    .facts { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+    .facts dd { margin-bottom: 8px; }
+    .tag { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<nav class="crumbs" aria-label="Brotkrumennavigation">
+  <a href="/">Zeichenprüfer</a><span>›</span>Unsichtbare Unicode-Zeichen
+</nav>
+
+<h1>Unsichtbare Unicode-Zeichen erkennen und entfernen</h1>
+<p class="standfirst">Ein Nachschlagewerk für die Zeichen, die in deinem Text stehen, ohne dass du sie siehst: was sie sind, woher sie kommen, was sie kaputt machen — und der genaue Befehl, mit dem du sie in Word, Excel oder VS Code loswirst.</p>
+
+<main>
+
+<section class="tool" aria-label="Text prüfen">
+  <div class="tool-head">
+    <span class="tool-title">Text prüfen</span>
+    <span class="tool-stat" id="stat" data-clean="true">Noch nichts eingefügt</span>
+  </div>
+  <label for="in" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Text einfügen</label>
+  <textarea id="in" spellcheck="false" placeholder="Text einfügen – die Auswertung erscheint sofort…"></textarea>
+  <div class="tool-foot">
+    <button class="btn primary" type="button" id="copy">Bereinigt kopieren</button>
+    <button class="btn" type="button" id="clear">Leeren</button>
+    <span class="tool-note">Nichts wird hochgeladen</span>
+  </div>
+</section>
+<p style="font-size:13.5px">Ausführlichere Auswertung mit Markierung jeder Fundstelle im Originaltext: <a href="/">zum vollständigen Werkzeug</a>.</p>
+
+<h2 id="liste">Die Zeichen im Einzelnen</h2>
+<p>Sortiert nach Häufigkeit im Alltag. Springe direkt zu deinem Codepoint:</p>
+
+<ul class="jump">
+  <li><a href="#u00a0">U+00A0</a></li>
+  <li><a href="#u202f">U+202F</a></li>
+  <li><a href="#u200b">U+200B</a></li>
+  <li><a href="#ufeff">U+FEFF</a></li>
+  <li><a href="#u00ad">U+00AD</a></li>
+  <li><a href="#u200d">U+200D</a></li>
+  <li><a href="#ufe0f">U+FE0F</a></li>
+  <li><a href="#u2060">U+2060</a></li>
+  <li><a href="#u202e">U+202E</a></li>
+  <li><a href="#tags">U+E0000</a></li>
+</ul>
+
+<article class="entry" id="u00a0">
+  <div class="entry-head">
+    <h3>U+00A0</h3>
+    <span class="name">Geschütztes Leerzeichen</span>
+    <span class="tag" data-k="ersetzt">wird ersetzt</span>
+  </div>
+  <div class="entry-body">
+    <p>Das häufigste unsichtbare Problem überhaupt. Es sieht aus wie ein Leerzeichen, verhält sich aber wie ein Buchstabe: Ein Zeilenumbruch darf hier nicht stattfinden. Gedacht ist es für Fälle wie <code>z. B.</code>, <code>Dr. Meyer</code> oder <code>5 kg</code>, wo eine Trennung hässlich wäre.</p>
+    <p><strong>Das Problem:</strong> Für jede Suchfunktion ist es ein völlig anderes Zeichen als das normale Leerzeichen. Du suchst nach „5 kg", der Text enthält „5&nbsp;kg", und es gibt keinen Treffer — obwohl beides identisch aussieht.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>HTML-Quelltext (<code>&amp;nbsp;</code>), Word-Autokorrektur, Strg + Umschalt + Leertaste, kopierte Webseiten</dd>
+      <dt>Symptom</dt>
+      <dd>Suche findet nichts, Excel-Zellen lassen sich nicht addieren, Umbrüche an falscher Stelle</dd>
+      <dt>Excel</dt>
+      <dd><code>=WECHSELN(A1;ZEICHEN(160);" ")</code> — <code>GLÄTTEN()</code> allein reicht nicht</dd>
+      <dt>Word</dt>
+      <dd>Suchen und Ersetzen, im Suchfeld <code>^s</code> eingeben</dd>
+      <dt>VS Code</dt>
+      <dd>Suche mit Regex-Modus, Muster <code>\u00A0</code></dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="u202f">
+  <div class="entry-head">
+    <h3>U+202F</h3>
+    <span class="name">Schmales geschütztes Leerzeichen</span>
+    <span class="tag" data-k="ersetzt">wird ersetzt</span>
+  </div>
+  <div class="entry-body">
+    <p>Die schmale Variante des geschützten Leerzeichens, englisch <em>Narrow No-Break Space</em>. DIN 5008 empfiehlt es als „Schmal-Leerzeichen" zwischen Zahl und Einheit, also in <code>12 %</code> oder <code>3 °C</code>. Typografisch ist das korrekt — technisch ist es eine Stolperfalle.</p>
+    <p><strong>Das Problem:</strong> Viele Schriftarten enthalten dieses Zeichen gar nicht. Unter Windows in Arial erscheint dann statt eines schmalen Abstands ein leeres Rechteck. Und wie beim normalen geschützten Leerzeichen findet keine Suche den Begriff.</p>
+    <p>Dieses Zeichen ist auch der Grund, warum Texte aus KI-Chatbots auffällig sind: Mehrere Redaktionen haben berichtet, dass ChatGPT-Modelle es vor Prozentzeichen einstreuen. Ob dahinter Absicht steckt, ist nicht geklärt — technisch ist es ein gewöhnliches Unicode-Zeichen und kein kryptografisches Verfahren.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>KI-Chatbots, professionelle Satzprogramme, DIN-konforme Vorlagen</dd>
+      <dt>Symptom</dt>
+      <dd>Leeres Rechteck statt Abstand, Suche schlägt fehl</dd>
+      <dt>Excel</dt>
+      <dd><code>=WECHSELN(A1;UNIZEICHEN(8239);" ")</code></dd>
+      <dt>Word</dt>
+      <dd>Suchen und Ersetzen, im Suchfeld <code>^u8239</code></dd>
+      <dt>VS Code</dt>
+      <dd>Regex-Muster <code>\u202F</code></dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="u200b">
+  <div class="entry-head">
+    <h3>U+200B</h3>
+    <span class="name">Breitenloses Leerzeichen (Zero Width Space)</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Ein Zeichen ohne jede Breite. Es markiert eine Stelle, an der ein langes Wort umbrechen darf, belegt aber selbst keinen Platz. Auf dem Bildschirm ist es vollständig unsichtbar — es gibt kein Symptom, an dem du es mit bloßem Auge erkennen könntest.</p>
+    <p><strong>Das Problem:</strong> Es steckt mitten in Wörtern. <code>Rech&#8203;nung</code> und <code>Rechnung</code> sind für den Computer zwei verschiedene Zeichenfolgen. Datenbankabgleiche schlagen fehl, Dubletten werden nicht erkannt, Passwortfelder lehnen die Eingabe ab.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>Kopierte Webinhalte, Content-Management-Systeme, automatische Umbruchhilfen</dd>
+      <dt>Symptom</dt>
+      <dd>Gar keines — sichtbar nur über die Zeichenzählung oder ein Prüfwerkzeug</dd>
+      <dt>Word</dt>
+      <dd>Suchen und Ersetzen, im Suchfeld <code>^u8203</code></dd>
+      <dt>VS Code</dt>
+      <dd>Regex-Muster <code>\u200B</code></dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="ufeff">
+  <div class="entry-head">
+    <h3>U+FEFF</h3>
+    <span class="name">Byte-Order-Mark (BOM)</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Ein Markierungszeichen am Dateianfang, das die Zeichenkodierung verrät. In der richtigen Rolle ist es nützlich: Excel erkennt daran, dass eine CSV-Datei UTF-8 ist, und stellt Umlaute korrekt dar. An der falschen Stelle richtet es Schaden an.</p>
+    <p><strong>Das Problem:</strong> Das BOM klebt am ersten Wert der Datei. Aus der Spaltenüberschrift <code>Name</code> wird <code>\uFEFFName</code>, und jeder Abgleich auf den Spaltennamen scheitert. JSON-Parser brechen mit einer Fehlermeldung ab, die auf Zeichen 1 zeigt, wo scheinbar nichts ist.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>CSV-Export aus Excel, Windows-Editoren mit Einstellung „UTF-8 mit BOM"</dd>
+      <dt>Symptom</dt>
+      <dd>Erste Spalte wird nicht erkannt, JSON-Fehler an Position 0, seltsames Zeichen ganz vorn</dd>
+      <dt>Python</dt>
+      <dd>Kodierung <code>utf-8-sig</code> statt <code>utf-8</code> beim Einlesen verwenden</dd>
+      <dt>VS Code</dt>
+      <dd>Unten rechts in der Statusleiste auf die Kodierung klicken, „Save with Encoding" → UTF-8 ohne BOM</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="u00ad">
+  <div class="entry-head">
+    <h3>U+00AD</h3>
+    <span class="name">Weiches Trennzeichen (Soft Hyphen)</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Ein Trennstrich auf Abruf: Er wird nur dann sichtbar, wenn das Wort am Zeilenende tatsächlich umbricht. Steht das Wort mitten in der Zeile, siehst du nichts — vorhanden ist er trotzdem.</p>
+    <p><strong>Das Problem:</strong> Kopierst du solchen Text aus einem Satzprogramm oder PDF, wandern die Trennzeichen mit. Die Wörter sind dann für jede Suche und jeden Abgleich zerstückelt, ohne dass du es siehst.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>Satzprogramme, PDF-Exporte, Silbentrennung in Word</dd>
+      <dt>Symptom</dt>
+      <dd>Wörter werden nicht gefunden, Rechtschreibprüfung meckert grundlos</dd>
+      <dt>Word</dt>
+      <dd>Suchen und Ersetzen, im Suchfeld <code>^-</code></dd>
+      <dt>VS Code</dt>
+      <dd>Regex-Muster <code>\u00AD</code></dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="u200d">
+  <div class="entry-head">
+    <h3>U+200D</h3>
+    <span class="name">Breitenloser Verbinder (Zero Width Joiner)</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Der Klebstoff zwischen Emojis. Zusammengesetzte Symbole wie das Familien-Emoji oder Berufsbezeichnungen bestehen aus mehreren Einzelzeichen, die durch diesen Verbinder zu einem Bild zusammengefasst werden.</p>
+    <p><strong>Zu beachten:</strong> Hier ist das Entfernen nicht immer erwünscht. Fällt der Verbinder weg, zerfällt ein zusammengesetztes Emoji in seine Bestandteile. In reinem Fließtext ohne Emojis ist er dagegen ein Fremdkörper, der nichts verloren hat.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>Emoji-Eingabe, kopierte Chatnachrichten, soziale Netzwerke</dd>
+      <dt>Symptom</dt>
+      <dd>Zeichenzahl höher als erwartet, Emojis zerfallen bei der Weiterverarbeitung</dd>
+      <dt>Achtung</dt>
+      <dd>Bei Texten mit zusammengesetzten Emojis die Regel bewusst abschalten</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="ufe0f">
+  <div class="entry-head">
+    <h3>U+FE0F</h3>
+    <span class="name">Variationsselektor-16</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Ein Steuerzeichen, das dem vorangehenden Symbol vorschreibt, farbig statt schwarzweiß dargestellt zu werden. Viele Zeichen existieren in beiden Formen — als schlichtes Textsymbol und als buntes Emoji.</p>
+    <p><strong>Das Problem:</strong> Es hängt unsichtbar an Symbolen und verfälscht jede Längenberechnung. Bei Zeichenbegrenzungen, etwa in SMS-Systemen oder Datenbankfeldern, zählt es voll mit, ohne sichtbar zu sein.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>Emoji-Tastaturen, kopierte Beiträge aus sozialen Netzwerken</dd>
+      <dt>Symptom</dt>
+      <dd>Text ist länger als gezählt, Feldbegrenzungen werden unerklärlich überschritten</dd>
+      <dt>Verwandt</dt>
+      <dd>Der gesamte Bereich U+FE00 bis U+FE0F sowie U+E0100 bis U+E01EF</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="u2060">
+  <div class="entry-head">
+    <h3>U+2060</h3>
+    <span class="name">Wortverbinder (Word Joiner)</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Das Gegenstück zum breitenlosen Leerzeichen: Es verhindert einen Umbruch an dieser Stelle, ohne selbst Platz zu belegen. Es hat U+FEFF in dieser Rolle abgelöst, damit das BOM eindeutig für die Kodierungserkennung reserviert bleibt.</p>
+    <p><strong>Das Problem:</strong> Wie alle breitenlosen Zeichen ist es im Text vorhanden, aber unsichtbar, und zerlegt Wörter für jede maschinelle Verarbeitung.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>Automatisierter Satz, technische Dokumentation, Formelsatz</dd>
+      <dt>Symptom</dt>
+      <dd>Keines sichtbar, Abgleiche scheitern</dd>
+      <dt>VS Code</dt>
+      <dd>Regex-Muster <code>\u2060</code></dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="u202e">
+  <div class="entry-head">
+    <h3>U+202E</h3>
+    <span class="name">Rechts-nach-links-Überschreibung</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Ein Steuerzeichen für zweisprachigen Satz: Es kehrt die Leserichtung des folgenden Textes um, damit sich arabische oder hebräische Passagen korrekt in lateinischen Text einfügen.</p>
+    <p><strong>Das Problem:</strong> Es lässt sich missbrauchen. Weil es die angezeigte Reihenfolge von Zeichen umdreht, ohne die tatsächlich gespeicherte zu ändern, kann ein Dateiname so gestaltet werden, dass er auf dem Bildschirm harmlos aussieht, während die Datei etwas ganz anderes ist. In normalem deutschsprachigem Text hat dieses Zeichen nichts zu suchen.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>Mehrsprachige Dokumente — oder gezielte Täuschung</dd>
+      <dt>Symptom</dt>
+      <dd>Text erscheint verdreht, Zeichen stehen in falscher Reihenfolge</dd>
+      <dt>Verwandt</dt>
+      <dd>Die gesamte Bidi-Gruppe: U+200E, U+200F, U+202A bis U+202E, U+2066 bis U+2069</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="tags">
+  <div class="entry-head">
+    <h3>U+E0000–U+E007F</h3>
+    <span class="name">Tag-Zeichen</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Ein Unicode-Bereich, der das gesamte lateinische Alphabet in unsichtbarer Form abbildet. Ursprünglich für Sprachmarkierungen gedacht, heute weitgehend ohne legitime Verwendung.</p>
+    <p><strong>Das Problem:</strong> Damit lässt sich vollständiger Text unsichtbar in anderem Text verstecken. Ein harmlos aussehender Absatz kann eine komplette zweite Nachricht enthalten, die kein Mensch sieht, aber jedes Programm liest. Wenn das Werkzeug hier etwas findet, lohnt ein genauerer Blick auf die Quelle des Texts.</p>
+    <dl class="facts">
+      <dt>Herkunft</dt>
+      <dd>Keine übliche — das Auftreten ist selbst schon das Signal</dd>
+      <dt>Symptom</dt>
+      <dd>Keines, außer einer unerklärlich hohen Zeichenzahl</dd>
+    </dl>
+  </div>
+</article>
+
+<h2 id="rezepte">Schnellübersicht: Suchen und Ersetzen</h2>
+<p>Wenn du die Zeichen lieber in deinem eigenen Programm entfernst, statt Text hin- und herzukopieren:</p>
+
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Programm</th>
+        <th scope="col">So findest du unsichtbare Zeichen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Word</td><td>Strg + H, im Suchfeld <code>^u160</code>, <code>^u8239</code> oder <code>^u8203</code> — die Zahl ist der Codepoint dezimal</td></tr>
+      <tr><td>Excel</td><td><code>=WECHSELN(A1;ZEICHEN(160);" ")</code> für U+00A0, <code>UNIZEICHEN(8239)</code> für U+202F</td></tr>
+      <tr><td>VS Code</td><td>Strg + F, Regex-Modus einschalten, dann <code>[\u200B-\u200F\u202A-\u202F\u2060\uFEFF\u00A0\u00AD]</code></td></tr>
+      <tr><td>Notepad++</td><td>Suchen, Suchmodus „Erweitert", dann <code>\x{202f}</code></td></tr>
+      <tr><td>Python</td><td><code>re.sub(r"[\u200B-\u200F\u2060\uFEFF\u00AD]", "", text)</code></td></tr>
+      <tr><td>Google Docs</td><td>Kein direkter Weg — Text hierher kopieren und bereinigt zurückholen</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="faq">Häufige Fragen</h2>
+
+<div class="faq-q">
+  <h3>Warum findet die Suche mein Wort nicht, obwohl es dasteht?</h3>
+  <p>Weil zwischen den Buchstaben oder anstelle des Leerzeichens ein unsichtbares Zeichen steht. Für den Computer ist die Zeichenfolge dann eine andere als deine Suchanfrage, obwohl beide auf dem Bildschirm identisch aussehen. Füge den Text oben ein — wenn die Zählung über null liegt, hast du deine Erklärung.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Kann ich diese Zeichen einfach immer entfernen?</h3>
+  <p>Fast immer, mit zwei Ausnahmen. Zusammengesetzte Emojis brauchen ihre Verbinder, sonst zerfallen sie. Und arabischer oder hebräischer Text braucht seine Bidi-Steuerzeichen, sonst steht er falsch herum. Für deutschsprachigen Fließtext gilt: Sie richten Schaden an und leisten nichts.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Woran erkenne ich, welches Zeichen es ist?</h3>
+  <p>Am Codepoint. Füge den Text in das <a href="/">vollständige Werkzeug</a> ein — dort wird jede Fundstelle im Originaltext farbig markiert und mit ihrer Nummer beschriftet, sodass du sie hier oben nachschlagen kannst.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Verändert das Entfernen meinen Text inhaltlich?</h3>
+  <p>Nein. Alle hier beschriebenen Zeichen sind Formatierungs- und Steuerzeichen ohne eigene Bedeutung. Buchstaben, Umlaute, Ziffern und Satzzeichen bleiben unberührt. Was sich ändern kann, ist die Typografie: Ein geschütztes Leerzeichen wird zum gewöhnlichen, ein Geviertstrich zum Bindestrich.</p>
+</div>
+
+<h2 id="programme">Anleitungen für einzelne Programme</h2>
+<p>Die Zeichen oben nachschlagen ist das eine — sie im eigenen Programm loszuwerden das andere. Für die drei häufigsten Fälle gibt es ausführliche Anleitungen:</p>
+<div class="related">
+  <a href="/geschuetztes-leerzeichen-word/">
+    <b>Word</b>
+    <span>Formatierungszeichen sichtbar machen und mit Sonderzeichen-Codes ersetzen</span>
+  </a>
+  <a href="/geschuetztes-leerzeichen-excel/">
+    <b>Excel</b>
+    <span>Warum GLÄTTEN versagt und welche Formel stattdessen greift</span>
+  </a>
+  <a href="/csv-unsichtbare-zeichen/">
+    <b>CSV-Dateien</b>
+    <span>Byte-Order-Mark erkennen und die erste Spalte reparieren</span>
+  </a>
+  <a href="/chatgpt-wasserzeichen/">
+    <b>KI-Texte und Wasserzeichen</b>
+    <span>Was in ChatGPT-Texten wirklich steckt – und was das Entfernen leistet</span>
+  </a>
+  <a href="/claude-wasserzeichen/">
+    <b>Claude-Wasserzeichen</b>
+    <span>Warum es echt ist, aber von keinem Zeichen-Werkzeug entfernt wird</span>
+  </a>
+  <a href="/ki-texte-erkennen/">
+    <b>KI-Texte erkennen</b>
+    <span>Was funktioniert, was nicht – mit Rechner zu den Fehlalarmen</span>
+  </a>
+</div>
+
+</main>
+
+<footer class="bottom">
+  <p>Zurück zum <a href="/">vollständigen Werkzeug</a> mit Analyse-Ansicht und einzeln zuschaltbaren Regeln. Alles läuft im Browser, ohne Upload und ohne Registrierung.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var INVIS = /[\u200B-\u200D\u2060\uFEFF\u00AD\u034F\u061C\u180E\u2061-\u2064\u200E\u200F\u202A-\u202E\u2066-\u2069\uFE00-\uFE0F]/g;
+  var TAGS = /[\u{E0000}-\u{E007F}]/gu;
+  var SPACE = /[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g;
+  var DASH = /[\u2010-\u2015\u2212]/g;
+
+  var input = document.getElementById("in");
+  var stat = document.getElementById("stat");
+  var copyBtn = document.getElementById("copy");
+
+  function clean(text) {
+    return text
+      .replace(TAGS, "")
+      .replace(INVIS, "")
+      .replace(SPACE, " ")
+      .replace(DASH, "-")
+      .replace(/…/g, "...")
+      .replace(/[ \t]+$/gm, "")
+      .replace(/[ ]{2,}/g, " ");
+  }
+
+  function count(text) {
+    var n = 0;
+    [INVIS, TAGS, SPACE, DASH].forEach(function (re) {
+      re.lastIndex = 0;
+      var m = text.match(re);
+      if (m) n += m.length;
+    });
+    var e = text.match(/…/g);
+    if (e) n += e.length;
+    return n;
+  }
+
+  function update() {
+    var text = input.value;
+    if (!text) {
+      stat.textContent = "Noch nichts eingefügt";
+      stat.dataset.clean = "true";
+      return;
+    }
+    var n = count(text);
+    stat.dataset.clean = n === 0 ? "true" : "false";
+    stat.innerHTML = n === 0
+      ? "<b>Sauber</b> – keine auffälligen Zeichen"
+      : "<b>" + n + "</b> auffällige" + (n === 1 ? "s" : "") + " Zeichen gefunden";
+  }
+
+  input.addEventListener("input", update);
+
+  document.getElementById("clear").addEventListener("click", function () {
+    input.value = "";
+    input.focus();
+    update();
+  });
+
+  copyBtn.addEventListener("click", function () {
+    var text = clean(input.value);
+    if (!text) return;
+
+    function done() {
+      copyBtn.dataset.done = "true";
+      copyBtn.textContent = "Kopiert";
+      setTimeout(function () {
+        copyBtn.dataset.done = "false";
+        copyBtn.textContent = "Bereinigt kopieren";
+      }, 1600);
+    }
+
+    function fehlgeschlagen() {
+      copyBtn.textContent = "Bitte manuell kopieren";
+      setTimeout(function () { copyBtn.textContent = "Bereinigt kopieren"; }, 2500);
+    }
+
+    function ersatzweg() {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy") ? done() : fehlgeschlagen(); }
+      catch (e) { fehlgeschlagen(); }
+      document.body.removeChild(ta);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, ersatzweg);
+    } else {
+      ersatzweg();
+    }
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>

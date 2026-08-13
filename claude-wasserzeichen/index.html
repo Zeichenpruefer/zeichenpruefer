@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Claude-Wasserzeichen entfernen – was wirklich geht</title>
+<meta name="description" content="Claude-Texte tragen seit August 2026 ein echtes Wasserzeichen – aber keines aus unsichtbaren Zeichen. Warum kein Zeichen-Werkzeug es entfernt.">
+
+<link rel="canonical" href="https://zeichenpruefer.de/claude-wasserzeichen/">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Zeichenprüfer">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Claude-Wasserzeichen entfernen – was wirklich geht">
+<meta property="og:description" content="Das Claude-Wasserzeichen besteht nicht aus unsichtbaren Zeichen. Warum es deshalb kein Zeichen-Werkzeug entfernen kann – auch dieses nicht.">
+<meta property="og:url" content="https://zeichenpruefer.de/claude-wasserzeichen/">
+<meta property="og:image" content="https://zeichenpruefer.de/og-claude.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude-Wasserzeichen – was Zeichenwerkzeuge leisten und was nicht">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Claude-Wasserzeichen entfernen – was wirklich geht">
+<meta name="twitter:description" content="Ein echtes Wasserzeichen, aber keines aus Zeichen. Warum kein Zeichen-Werkzeug es entfernt.">
+<meta name="twitter:image" content="https://zeichenpruefer.de/og-claude.png">
+
+<meta name="theme-color" content="#EBEDF2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1015" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B44E0'/%3E%3Ctext x='16' y='23' font-family='ui-monospace,monospace' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3EZ%3C/text%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Zeichenprüfer", "item": "https://zeichenpruefer.de/" },
+        { "@type": "ListItem", "position": 2, "name": "Claude-Wasserzeichen", "item": "https://zeichenpruefer.de/claude-wasserzeichen/" }
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Claude-Wasserzeichen entfernen",
+      "description": "Warum das Wasserzeichen in Claude-Texten nicht aus unsichtbaren Zeichen besteht und deshalb von keinem zeichenbasierten Werkzeug entfernt werden kann.",
+      "inLanguage": "de",
+      "url": "https://zeichenpruefer.de/claude-wasserzeichen/",
+      "image": "https://zeichenpruefer.de/og-claude.png",
+      "dateModified": "2026-08-13",
+      "isPartOf": { "@type": "WebSite", "name": "Zeichenprüfer", "url": "https://zeichenpruefer.de/" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Hat Claude ein Wasserzeichen?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Ja. Anthropic versieht Claude-Ausgaben seit dem 2. August 2026 mit einem Wasserzeichen. Anlass sind die Transparenzverpflichtungen aus dem EU-AI-Act. Es betrifft alle Claude-Produkte einschließlich der Programmierschnittstelle." }
+        },
+        {
+          "@type": "Question",
+          "name": "Besteht das Claude-Wasserzeichen aus unsichtbaren Zeichen?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nein. Es ist ein statistisches Wasserzeichen: Bei der Texterzeugung wird die Auswahl zwischen gleichwertigen Wortalternativen nach einem geheimen Schlüssel gelenkt. Die Signatur steckt in der Wortwahl selbst, nicht in zusätzlichen Zeichen. Es gibt kein Zeichen, das man suchen oder löschen könnte." }
+        },
+        {
+          "@type": "Question",
+          "name": "Kann der Zeichenprüfer das Claude-Wasserzeichen entfernen?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nein, und kein anderes zeichenbasiertes Werkzeug kann das. Diese Werkzeuge entfernen Zeichen aus dem Text. Das Wasserzeichen besteht aber nicht aus Zeichen, sondern aus der Wahl der Wörter. Wer etwas anderes verspricht, kann es technisch nicht einlösen." }
+        },
+        {
+          "@type": "Question",
+          "name": "Was findet der Zeichenprüfer in Claude-Texten dann?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Typografische Spuren, die beim Kopieren aus der Weboberfläche entstehen: geschützte Leerzeichen, Geviertstriche statt Bindestrichen, echte Auslassungspunkte, gelegentlich breitenlose Zeichen. Das sind reale Störfaktoren für Suche, Import und Weiterverarbeitung, haben mit dem Wasserzeichen aber nichts zu tun." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+  :root {
+    --ground: #EBEDF2;
+    --surface: #FFFFFF;
+    --surface-2: #F4F6FA;
+    --line: #D6DAE4;
+    --line-soft: #E4E7EE;
+    --ink: #14161D;
+    --ink-2: #565D70;
+    --ink-3: #868DA0;
+    --accent: #2B44E0;
+    --accent-ink: #FFFFFF;
+    --accent-soft: rgba(43, 68, 224, .10);
+    --flag: #B94A15;
+    --flag-soft: rgba(185, 74, 21, .12);
+    --ok: #10704F;
+    --ok-soft: rgba(16, 112, 79, .12);
+    --shadow: 0 1px 2px rgba(20,22,29,.06), 0 8px 24px -12px rgba(20,22,29,.18);
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0E1015; --surface: #161922; --surface-2: #1B1F29;
+      --line: #2B303C; --line-soft: #232833;
+      --ink: #E7E9F0; --ink-2: #A2A9BA; --ink-3: #6E7688;
+      --accent: #8093FF; --accent-ink: #0E1015; --accent-soft: rgba(128,147,255,.14);
+      --flag: #F1874A; --flag-soft: rgba(241,135,74,.16);
+      --ok: #56C398; --ok-soft: rgba(86,195,152,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0E1015; --surface: #161922; --surface-2: #1B1F29;
+    --line: #2B303C; --line-soft: #232833;
+    --ink: #E7E9F0; --ink-2: #A2A9BA; --ink-3: #6E7688;
+    --accent: #8093FF; --accent-ink: #0E1015; --accent-soft: rgba(128,147,255,.14);
+    --flag: #F1874A; --flag-soft: rgba(241,135,74,.16);
+    --ok: #56C398; --ok-soft: rgba(86,195,152,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 26px 20px 70px; }
+
+  .crumbs { font-size: 12.5px; color: var(--ink-3); margin-bottom: 22px; }
+  .crumbs a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .crumbs a:hover { color: var(--accent); border-color: var(--accent); }
+  .crumbs span { margin: 0 7px; }
+
+  h1 {
+    margin: 0 0 12px;
+    font-family: var(--mono);
+    font-size: clamp(25px, 4.2vw, 34px);
+    font-weight: 600;
+    letter-spacing: -.035em;
+    line-height: 1.16;
+    text-wrap: balance;
+  }
+
+  .standfirst { margin: 0 0 24px; color: var(--ink-2); font-size: 16.5px; max-width: 66ch; }
+
+  h2 {
+    margin: 46px 0 10px;
+    font-family: var(--mono);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    scroll-margin-top: 18px;
+    text-wrap: balance;
+  }
+
+  h3 { margin: 24px 0 6px; font-size: 15.5px; font-weight: 600; }
+
+  p { max-width: 68ch; margin: 0 0 12px; color: var(--ink-2); }
+  p strong { color: var(--ink); font-weight: 600; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--accent); }
+
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  kbd {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 2px 7px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* Sofortlösung */
+
+  .solution {
+    margin: 0 0 26px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--ok);
+    border-radius: 11px;
+    background: var(--surface);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .solution h2 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-family: var(--sans);
+    letter-spacing: 0;
+    color: var(--ok);
+  }
+
+  .solution ol { margin: 0; padding-left: 20px; }
+  .solution li { margin-bottom: 7px; color: var(--ink-2); }
+  .solution li:last-child { margin-bottom: 0; }
+  .solution li strong { color: var(--ink); }
+
+  /* Werkzeug */
+
+  .tool {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin: 16px 0 10px;
+  }
+
+  .tool-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    padding: 11px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .tool-title { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .tool-stat { font-size: 13px; color: var(--ink-2); }
+  .tool-stat b { font-family: var(--mono); color: var(--flag); font-variant-numeric: tabular-nums; }
+  .tool-stat[data-clean="true"] b { color: var(--ok); }
+
+  textarea {
+    width: 100%; display: block; border: 0;
+    padding: 14px; min-height: 120px; resize: vertical;
+    font-family: var(--mono); font-size: 13px; line-height: 1.65;
+    background: var(--surface); color: var(--ink);
+  }
+
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+  textarea::placeholder { color: var(--ink-3); }
+
+  .tool-foot {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 11px 14px;
+    border-top: 1px solid var(--line-soft);
+    background: var(--surface-2);
+  }
+
+  .btn {
+    font: inherit; font-size: 13px; padding: 6px 13px;
+    border-radius: 7px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink-2); cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+
+  .btn:hover { color: var(--ink); border-color: var(--ink-3); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
+  .btn.primary[data-done="true"] { background: var(--ok); border-color: var(--ok); }
+  .tool-note { font-size: 12.5px; color: var(--ink-3); margin-left: auto; }
+
+  /* Tabelle */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    margin-top: 16px;
+  }
+
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 13.5px; }
+
+  th, td { text-align: left; padding: 10px 15px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+
+  thead th {
+    font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); background: var(--surface-2); font-weight: 600; white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: 0; }
+  td { color: var(--ink-2); }
+  td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+
+  .faq-q { margin-top: 22px; }
+  .faq-q h3 { margin-bottom: 4px; }
+
+  /* Weiterführend */
+
+  .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 18px; }
+
+  .related a {
+    display: block;
+    padding: 15px 17px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    text-decoration: none;
+    transition: border-color .15s;
+  }
+
+  .related a:hover { border-color: var(--accent); }
+  .related b { display: block; color: var(--ink); font-size: 14.5px; margin-bottom: 3px; }
+  .related span { color: var(--ink-2); font-size: 13px; }
+
+  footer.bottom {
+    margin-top: 50px; padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-3); font-size: 13px;
+  }
+
+  footer.bottom p { color: var(--ink-3); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<nav class="crumbs" aria-label="Brotkrumennavigation">
+  <a href="/">Zeichenprüfer</a><span>›</span>Claude-Wasserzeichen
+</nav>
+
+<h1>Claude-Wasserzeichen entfernen</h1>
+<p class="standfirst">Die kurze Antwort ist unbequem, aber sie erspart dir Zeit und womöglich Geld: Claude-Texte tragen seit August 2026 ein echtes Wasserzeichen — und es besteht nicht aus unsichtbaren Zeichen. Deshalb kann es kein zeichenbasiertes Werkzeug entfernen, dieses hier eingeschlossen.</p>
+
+<main>
+
+<div class="solution">
+  <h2>Das Wichtigste in drei Sätzen</h2>
+  <ol>
+    <li><strong>Ja, es gibt ein Wasserzeichen.</strong> Anthropic hat es zum 2. August 2026 eingeführt, ausgelöst durch den EU-AI-Act.</li>
+    <li><strong>Nein, es sind keine versteckten Zeichen.</strong> Die Signatur steckt in der Wortwahl selbst — es gibt nichts zu suchen und nichts zu löschen.</li>
+    <li><strong>Was dieses Werkzeug für dich tut:</strong> Es entfernt die typografischen Spuren, die beim Kopieren aus der Weboberfläche mitwandern. Das ist ein anderes, reales Problem.</li>
+  </ol>
+</div>
+
+<h2 id="was">Was Anthropic seit August 2026 macht</h2>
+<p>Anthropic hat sich verpflichtet, Claude-Ausgaben zu kennzeichnen. Auslöser ist der Verhaltenskodex zum EU-AI-Act, der Anbieter zur maschinenlesbaren Markierung KI-erzeugter Inhalte anhält. Betroffen sind alle Claude-Produkte — die Weboberfläche, die Programmierschnittstelle und die übrigen Anwendungen. Berichtet haben darüber unter anderem <a href="https://the-decoder.de/ki-texterkennung-anthropic-versieht-claude-mit-unsichtbarem-wasserzeichen/" rel="nofollow">the decoder</a>, <a href="https://www.ifun.de/chatgpt-und-claude-ki-texte-bekommen-unsichtbare-wasserzeichen-285581/" rel="nofollow">ifun.de</a> und <a href="https://www.pcgameshardware.de/Kuenstliche-Intelligenz-Hardware-279517/News/Claude-Text-Wasserzeichen-Copy-Paste-Anthropic-1550892/" rel="nofollow">PC Games Hardware</a>.</p>
+<p>Dabei sind zwei getrennte Verfahren im Einsatz. Für <strong>Text</strong> ein statistisches Wasserzeichen, das gleich näher beschrieben wird. Für <strong>Dateien</strong> wie PNG, JPG oder SVG zusätzlich signierte Metadaten nach dem offenen C2PA-Standard — die allerdings beim Neuspeichern, bei Formatumwandlung oder durch einen Bildschirmfoto verschwinden.</p>
+
+<h2 id="wie">Wie das Text-Wasserzeichen funktioniert</h2>
+<p>Beim Schreiben hat ein Sprachmodell an jeder Stelle mehrere Wörter zur Auswahl, die alle passen würden. „Das Ergebnis ist <em>deutlich</em> besser" oder „<em>merklich</em> besser" oder „<em>spürbar</em> besser" — inhaltlich gleichwertig.</p>
+<p>Das Wasserzeichen nutzt genau diesen Spielraum: Die Auswahl zwischen den gleichwertigen Möglichkeiten wird nach einem geheimen Schlüssel gelenkt. Über einen längeren Text entsteht daraus ein statistisches Muster, das mit Kenntnis des Schlüssels nachweisbar ist — und das keinem Leser auffällt, weil jede einzelne Wortwahl völlig unauffällig ist.</p>
+<p><strong>Daraus folgen drei Eigenschaften:</strong> Es überlebt Kopieren und Einfügen, weil es in den Wörtern selbst steckt. Es braucht eine Mindestlänge, weil ein statistisches Muster erst über viele Wörter erkennbar wird. Und es lässt sich durch Suchen und Ersetzen nicht angreifen, weil es keine Fundstelle gibt.</p>
+
+<h2 id="warum-nicht">Warum kein Zeichen-Werkzeug es entfernt</h2>
+<p>Der Zeichenprüfer arbeitet, wie jedes Werkzeug dieser Art, auf der Ebene einzelner Zeichen. Er prüft jedes Zeichen, ordnet es einer Regel zu und entfernt oder ersetzt es. Das funktioniert hervorragend bei <a href="/unicode-zeichen/">unsichtbaren Unicode-Zeichen</a>, geschützten Leerzeichen und typografischen Sonderformen.</p>
+<p>Beim Claude-Wasserzeichen läuft dieser Ansatz vollständig ins Leere. Es gibt <strong>kein Zeichen, das entfernt werden könnte</strong>. Die Information liegt nicht in zusätzlichen Zeichen, sondern in der Auswahl der ohnehin vorhandenen Wörter. Man müsste die Wörter selbst austauschen — und dann wäre es ein anderer Text.</p>
+<p>Das gilt für jedes zeichenbasierte Werkzeug im Netz, unabhängig davon, was auf der Startseite versprochen wird. Wenn ein Anbieter behauptet, KI-Wasserzeichen zu entfernen, und dabei Zeichen aus deinem Text löscht, dann entfernt er typografische Auffälligkeiten — nicht das Wasserzeichen. Ob das aus Unkenntnis oder Absicht geschieht, ändert am Ergebnis nichts.</p>
+
+<h2 id="was-bleibt">Was in Claude-Texten tatsächlich zu finden ist</h2>
+<p>Damit bleibt ein echtes, davon unabhängiges Problem: Text, der aus einer Weboberfläche kopiert wird, bringt Typografie mit, die in vielen Zielsystemen stört.</p>
+
+<section class="tool" aria-label="Text prüfen">
+  <div class="tool-head">
+    <span class="tool-title">Claude-Text prüfen</span>
+    <span class="tool-stat" id="stat" data-clean="true">Noch nichts eingefügt</span>
+  </div>
+  <label for="in" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Text einfügen</label>
+  <textarea id="in" spellcheck="false" placeholder="Text aus Claude hier einfügen…"></textarea>
+  <div class="tool-foot">
+    <button class="btn primary" type="button" id="copy">Bereinigt kopieren</button>
+    <button class="btn" type="button" id="clear">Leeren</button>
+    <span class="tool-note">Nichts wird hochgeladen</span>
+  </div>
+</section>
+
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Codepoint</th>
+        <th scope="col">Zeichen</th>
+        <th scope="col">Was es stört</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>U+00A0</code></td><td>Geschütztes Leerzeichen</td><td>Suche findet den Begriff nicht, Excel rechnet nicht</td></tr>
+      <tr><td><code>U+202F</code></td><td>Schmales geschütztes Leerzeichen</td><td>Leeres Rechteck in Schriften ohne dieses Zeichen</td></tr>
+      <tr><td><code>U+2014</code></td><td>Geviertstrich</td><td>Fällt in nüchternem Fließtext auf</td></tr>
+      <tr><td><code>U+2026</code></td><td>Auslassungspunkte</td><td>Wird von manchen Systemen nicht dargestellt</td></tr>
+      <tr><td><code>U+200B</code></td><td>Breitenloses Leerzeichen</td><td>Zerlegt Wörter für jeden maschinellen Abgleich</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>Diese Zeichen zu entfernen ist sinnvoll, wenn der Text weiterverarbeitet wird. Es macht den Text aber nicht „unerkennbar" — es räumt Formatierung auf.</p>
+
+<h2 id="ehrlich">Was das Wasserzeichen nicht bedeutet</h2>
+<p>Zwei Einschränkungen, die in der Berichterstattung oft untergehen und in beide Richtungen wichtig sind.</p>
+<p><strong>Ein erkanntes Wasserzeichen beweist nicht, dass ein Text von einer KI verfasst wurde.</strong> Viele Menschen nutzen Claude, um eigene Texte zu überarbeiten oder zu übersetzen. Das Ergebnis trägt dann die Signatur, obwohl Gedanken und Substanz vom Menschen stammen.</p>
+<p><strong>Umgekehrt beweist ein fehlendes Wasserzeichen nichts.</strong> Kurze Texte tragen kein verlässliches Signal, weil ein statistisches Muster eine Mindestlänge braucht. Und stärkere Überarbeitung schwächt es ab — das ist keine Lücke, sondern folgt zwangsläufig aus dem Verfahren, und Anthropic benennt es selbst.</p>
+<p>Wer also eine Prüfung als Beweis in einer Bewertung, einer Prüfungssituation oder einem Arbeitsverhältnis verwenden will, sollte beide Richtungen kennen. Das Verfahren ist als Herkunftsnachweis gebaut, nicht als Beweismittel gegen Einzelpersonen.</p>
+
+<h2 id="faq">Häufige Fragen</h2>
+
+<div class="faq-q">
+  <h3>Gibt es überhaupt eine Möglichkeit, das Wasserzeichen loszuwerden?</h3>
+  <p>Nach Angaben aus der Berichterstattung überlebt es starke Umformulierung und Übersetzung nicht. Das ist eine bekannte Eigenschaft des Verfahrens und keine Anleitung — wer einen Text so weitgehend umschreibt, dass die Signatur verschwindet, hat den Text ohnehin neu geschrieben. Ein Werkzeug, das das per Knopfdruck verspricht, gibt es nicht.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Betrifft das auch Texte, die ich vor August 2026 erzeugt habe?</h3>
+  <p>Ältere Texte tragen die Kennzeichnung nicht. Die Markierung gilt für neue Modellversionen ab dem Stichtag; für ältere Modelle wurde eine Übergangsfrist genannt.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Und bei ChatGPT?</h3>
+  <p>Dort ist die Lage anders gelagert: Berichtet wurde vor allem über auffällige typografische Zeichen, nicht über ein statistisches Verfahren. Was dort tatsächlich im Text steckt, steht auf der Seite zu <a href="/chatgpt-wasserzeichen/">ChatGPT-Wasserzeichen</a>.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Warum steht das so offen auf einer Seite, die Zeichen entfernt?</h3>
+  <p>Weil die Alternative wäre, etwas zu verkaufen, das dieses Werkzeug nicht kann. Der Zeichenprüfer räumt Zeichen auf — gründlich und nachvollziehbar. Wasserzeichen aus Wortwahl gehören nicht dazu, und das sollte man erfahren, bevor man Zeit investiert.</p>
+</div>
+
+<h2>Weiterführend</h2>
+<div class="related">
+  <a href="/chatgpt-wasserzeichen/">
+    <b>ChatGPT-Wasserzeichen</b>
+    <span>Was dort im Text steckt und warum es etwas anderes ist</span>
+  </a>
+  <a href="/unicode-zeichen/">
+    <b>Nachschlagewerk unsichtbare Zeichen</b>
+    <span>Jeder Codepoint einzeln erklärt, mit Herkunft und Symptomen</span>
+  </a>
+  <a href="/">
+    <b>Vollständiges Werkzeug</b>
+    <span>Mit Analyse-Ansicht und einzeln zuschaltbaren Regeln</span>
+  </a>
+  <a href="/ki-texte-erkennen/">
+    <b>KI-Texte erkennen</b>
+    <span>Was funktioniert, was nicht – mit Rechner zu den Fehlalarmen</span>
+  </a>
+</div>
+
+</main>
+
+<footer class="bottom">
+  <p>Stand: 13. August 2026. Angaben zum Wasserzeichenverfahren beruhen auf öffentlicher Berichterstattung; Anthropic hat das genaue Schema nicht veröffentlicht.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var INVIS = /[\u200B-\u200D\u2060\uFEFF\u00AD\u034F\u061C\u180E\u2061-\u2064\u200E\u200F\u202A-\u202E\u2066-\u2069\uFE00-\uFE0F]/g;
+  var TAGS = /[\u{E0000}-\u{E007F}]/gu;
+  var SPACE = /[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g;
+  var DASH = /[\u2010-\u2015\u2212]/g;
+  var ELL = /\u2026/g;
+
+  var input = document.getElementById("in");
+  var stat = document.getElementById("stat");
+  var copyBtn = document.getElementById("copy");
+
+  function clean(text) {
+    return text
+      .replace(TAGS, "")
+      .replace(INVIS, "")
+      .replace(SPACE, " ")
+      .replace(DASH, "-")
+      .replace(ELL, "...")
+      .replace(/[ \t]+$/gm, "")
+      .replace(/[ ]{2,}/g, " ");
+  }
+
+  function count(text) {
+    var n = 0;
+    [INVIS, TAGS, SPACE, DASH, ELL].forEach(function (re) {
+      var m = text.match(re);
+      if (m) n += m.length;
+    });
+    return n;
+  }
+
+  function update() {
+    var text = input.value;
+    if (!text) {
+      stat.textContent = "Noch nichts eingefügt";
+      stat.dataset.clean = "true";
+      return;
+    }
+    var n = count(text);
+    stat.dataset.clean = n === 0 ? "true" : "false";
+    stat.innerHTML = n === 0
+      ? "<b>Sauber</b> – keine auffälligen Zeichen"
+      : "<b>" + n + "</b> auffällige" + (n === 1 ? "s" : "") + " Zeichen gefunden";
+  }
+
+  input.addEventListener("input", update);
+
+  document.getElementById("clear").addEventListener("click", function () {
+    input.value = "";
+    input.focus();
+    update();
+  });
+
+  copyBtn.addEventListener("click", function () {
+    var text = clean(input.value);
+    if (!text) return;
+    function done() {
+      copyBtn.dataset.done = "true";
+      copyBtn.textContent = "Kopiert";
+      setTimeout(function () {
+        copyBtn.dataset.done = "false";
+        copyBtn.textContent = "Bereinigt kopieren";
+      }, 1600);
+    }
+    function fehlgeschlagen() {
+      copyBtn.textContent = "Bitte manuell kopieren";
+      setTimeout(function () { copyBtn.textContent = "Bereinigt kopieren"; }, 2500);
+    }
+
+    function ersatzweg() {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy") ? done() : fehlgeschlagen(); }
+      catch (e) { fehlgeschlagen(); }
+      document.body.removeChild(ta);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, ersatzweg);
+    } else {
+      ersatzweg();
+    }
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
