@@ -40,8 +40,18 @@
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Zeichenprüfer", "item": "https://zeichenpruefer.de/" },
-        { "@type": "ListItem", "position": 2, "name": "KI-Texte erkennen", "item": "https://zeichenpruefer.de/ki-texte-erkennen/" }
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Zeichenprüfer",
+          "item": "https://zeichenpruefer.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "KI-Texte erkennen",
+          "item": "https://zeichenpruefer.de/ki-texte-erkennen/"
+        }
       ]
     },
     {
@@ -52,7 +62,11 @@
       "url": "https://zeichenpruefer.de/ki-texte-erkennen/",
       "image": "https://zeichenpruefer.de/og-erkennen.png",
       "dateModified": "2026-08-15",
-      "isPartOf": { "@type": "WebSite", "name": "Zeichenprüfer", "url": "https://zeichenpruefer.de/" }
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Zeichenprüfer",
+        "url": "https://zeichenpruefer.de/"
+      }
     },
     {
       "@type": "FAQPage",
@@ -60,22 +74,42 @@
         {
           "@type": "Question",
           "name": "Sind KI-Detektoren wie GPTZero zuverlässig?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Nein, nicht für Entscheidungen über einzelne Personen. Sie prüfen kein Wasserzeichen, sondern schätzen anhand statistischer Auffälligkeiten. Weil KI-Texte in den meisten Prüfstapeln in der Minderheit sind, ist selbst bei guter Genauigkeit ein großer Teil der Warnungen falsch." }
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein, nicht für Entscheidungen über einzelne Personen. Sie prüfen kein Wasserzeichen, sondern schätzen anhand statistischer Auffälligkeiten. Weil KI-Texte in den meisten Prüfstapeln in der Minderheit sind, ist selbst bei guter Genauigkeit ein großer Teil der Warnungen falsch."
+          }
         },
         {
           "@type": "Question",
           "name": "Kann man das Claude-Wasserzeichen selbst prüfen?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Für Text derzeit nicht. Die Prüfung braucht einen geheimen Schlüssel, den nur Anthropic besitzt. Eine öffentliche Erkennungsschnittstelle ist angekündigt, aber noch nicht verfügbar. Bei Bilddateien lassen sich C2PA-Metadaten dagegen sofort prüfen." }
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Für Text derzeit nicht. Die Prüfung braucht einen geheimen Schlüssel, den nur Anthropic besitzt. Eine öffentliche Erkennungsschnittstelle ist angekündigt, aber noch nicht verfügbar. Bei Bilddateien lassen sich C2PA-Metadaten dagegen sofort prüfen."
+          }
         },
         {
           "@type": "Question",
           "name": "Beweisen unsichtbare Zeichen, dass ein Text von einer KI stammt?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Nein. Geschützte Leerzeichen, Geviertstriche und breitenlose Zeichen entstehen beim Kopieren aus jeder Weboberfläche, auch aus Wikipedia oder einem Redaktionssystem. Sie zeigen, dass Text kopiert wurde, nicht wer ihn geschrieben hat." }
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nein. Geschützte Leerzeichen, Geviertstriche und breitenlose Zeichen entstehen beim Kopieren aus jeder Weboberfläche, auch aus Wikipedia oder einem Redaktionssystem. Sie zeigen, dass Text kopiert wurde, nicht wer ihn geschrieben hat."
+          }
         },
         {
           "@type": "Question",
           "name": "Warum flaggen KI-Detektoren Texte von Nicht-Muttersprachlern häufiger?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Weil sie messen, wie vorhersagbar ein Text ist. Wer in einer Fremdsprache schreibt, verwendet tendenziell häufigere Wörter und geradlinigere Satzstrukturen. Genau das werten die Verfahren als maschinentypisch." }
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Weil sie messen, wie vorhersagbar ein Text ist. Wer in einer Fremdsprache schreibt, verwendet tendenziell häufigere Wörter und geradlinigere Satzstrukturen. Genau das werten die Verfahren als maschinentypisch."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Kann man einen KI-Detektor umgehen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ja, mit geringem Aufwand. Es gibt Dienste, die Text von einem Sprachmodell so umschreiben lassen, dass die gemessenen Werte in den unauffälligen Bereich rutschen. Das kostet wenige Euro im Monat. Ein Nachweisverfahren, das sich so einfach aushebeln lässt, trifft vor allem die, die es gar nicht umgehen wollen."
+          }
         }
       ]
     }
@@ -532,6 +566,19 @@
 <p>Nur schreiben Menschen ebenfalls vorhersagbar, wenn sie in einer Fremdsprache schreiben. Wer nicht muttersprachlich formuliert, greift zu häufigeren Wörtern und geradlinigeren Sätzen — genau dem Muster, das die Verfahren als maschinentypisch werten. Untersuchungen zeigen entsprechend deutlich erhöhte Fehlalarmquoten bei Nicht-Muttersprachlern.</p>
 <p>Dasselbe gilt für sorgfältig redigierte Texte, für Fachtexte mit festen Formulierungen und für jeden, der gelernt hat, klar und gegliedert zu schreiben. Ein Detektor bestraft Verständlichkeit.</p>
 
+<h2 id="umgehung">Warum Detektoren leicht zu umgehen sind</h2>
+<p>Der dritte Einwand wiegt schwerer als die beiden vorigen: Ein Verfahren, das sich für wenige Euro im Monat zuverlässig aushebeln lässt, kann niemanden überführen.</p>
+<p>Es gibt eine ganze Produktgattung dafür, meist als „Humanizer" beworben. Diese Dienste schicken den Text an einen Server, lassen ihn von einem Sprachmodell neu formulieren und geben ihn zurück. Sie greifen dabei genau die beiden Größen an, die Detektoren messen.</p>
+<p><strong>Gegen die Perplexität</strong> setzen sie bewusst unwahrscheinlichere Wörter ein. Statt des naheliegenden Synonyms eines, das statistisch weiter unten steht, inhaltlich aber noch passt. Damit steigt der Wert genau in den Bereich, den Detektoren als menschlich einordnen.</p>
+<p><strong>Gegen die Gleichmäßigkeit</strong> brechen sie den Satzrhythmus auf: lange und kurze Sätze mischen, Parallelkonstruktionen auflösen, Absatzlängen variieren. Dazu entfernen sie bekannte Verräter wie Geviertstriche und Wendungen der Sorte „es ist wichtig anzumerken".</p>
+<p>Die stärkeren Anbieter arbeiten in einer Schleife: umschreiben, mit einem Detektor prüfen, bei zu hohem Wert erneut umschreiben. Das ist kein Sprachverständnis, sondern Optimierung gegen eine Zielfunktion.</p>
+
+<h3>Was daraus folgt</h3>
+<p><strong>Wer täuschen will, täuscht.</strong> Der Aufwand beträgt ein paar Klicks und einen Monatsbeitrag. Getroffen werden von einem Detektor also nicht die, die ihn umgehen wollen, sondern die, die nichts tun: Nicht-Muttersprachler, sorgfältige Schreiber, Leute mit klarem Stil.</p>
+<p><strong>Der Preis ist die Sprache.</strong> Wer systematisch das zweitbeste Wort einsetzt, bekommt Texte mit schiefen Bildern, ungewöhnlichen Wortverbindungen und verrutschter Bedeutung. Bei Fachtexten, Zahlen und Definitionen ist das ein reales Risiko.</p>
+<p><strong>Und es hilft nur begrenzt.</strong> Überoptimierter Text hat eine eigene Signatur: eine Wortverteilung, die weder typisch maschinell noch typisch menschlich ist. Manche Detektoren erkennen inzwischen genau das. Detektoren und Umschreibedienste befinden sich in einem Wettrüsten, in dem kein Zustand lange hält.</p>
+<p>Nebenbei erklärt dasselbe Verfahren, warum solche Dienste auch das <a href="/claude-wasserzeichen/">Claude-Wasserzeichen</a> zerstören: Die Signatur steckt in der Auswahl zwischen gleichwertigen Wortalternativen, und genau diese Auswahl wird hier ausgetauscht. Das ist ein Nebeneffekt, nicht das Ziel.</p>
+
 <h2 id="zeichen">Was unsichtbare Zeichen aussagen — und was nicht</h2>
 <p>Weil dieses Werkzeug genau solche Zeichen findet, gehört die Einordnung hierher: <strong>Sie beweisen nichts über die Autorschaft.</strong></p>
 <p>Geschützte Leerzeichen, Geviertstriche und breitenlose Zeichen entstehen beim Kopieren aus jeder Weboberfläche — aus Wikipedia, aus einem Redaktionssystem, aus einem PDF, aus Word. Sie zeigen, dass Text kopiert und typografisch gesetzt wurde. Nicht, von wem.</p>
@@ -559,6 +606,11 @@
 <div class="faq-q">
   <h3>Und bei Bildern?</h3>
   <p>Dort geht es heute schon. Claude-erzeugte PNG-, JPG- und SVG-Dateien tragen signierte C2PA-Metadaten, die sich mit dem Prüfwerkzeug unter contentcredentials.org auslesen lassen. Achtung: Ein Bildschirmfoto oder eine Formatumwandlung entfernt sie, ein Nicht-Treffer bedeutet also nichts.</p>
+</div>
+
+<div class="faq-q">
+  <h3>Kann man einen Detektor umgehen?</h3>
+  <p>Ja, mit geringem Aufwand. Es gibt Dienste, die Text von einem Sprachmodell so umschreiben lassen, dass die gemessenen Werte in den unauffälligen Bereich rutschen. Das kostet wenige Euro im Monat. Ein Nachweisverfahren, das sich so einfach aushebeln lässt, trifft vor allem die, die es gar nicht umgehen wollen.</p>
 </div>
 
 <div class="faq-q">
