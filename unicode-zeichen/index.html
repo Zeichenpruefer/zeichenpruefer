@@ -502,6 +502,7 @@
   <li><a href="#ufe0f">U+FE0F</a></li>
   <li><a href="#u2060">U+2060</a></li>
   <li><a href="#u202e">U+202E</a></li>
+  <li><a href="#veraltet">U+206A</a></li>
   <li><a href="#tags">U+E0000</a></li>
 </ul>
 
@@ -700,6 +701,26 @@
   </div>
 </article>
 
+<article class="entry" id="veraltet">
+  <div class="entry-head">
+    <h3>U+206A&ndash;U+206F</h3>
+    <span class="name">Veraltete Formatsteuerzeichen</span>
+    <span class="tag" data-k="weg">wird entfernt</span>
+  </div>
+  <div class="entry-body">
+    <p>Sechs Steuerzeichen aus der Frühzeit von Unicode, die das Verhalten von Klammern und Ziffernformen umschalten sollten. Sie gelten seit Langem als veraltet, werden von keiner aktuellen Software mehr erzeugt und sollten in modernem Text nicht vorkommen.</p>
+    <p><strong>Warum sie trotzdem auftauchen:</strong> in alten Datenbeständen, in Text aus Systemen der Neunzigerjahre und gelegentlich durch fehlerhafte Konvertierung. Sie sind vollständig unsichtbar und verhalten sich wie jedes andere breitenlose Zeichen: Sie verlängern die Zeichenzählung und brechen Vergleiche.</p>
+    <dl class="facts">
+      <dt>Umfang</dt>
+      <dd>U+206A bis U+206F, sechs Zeichen</dd>
+      <dt>Symptom</dt>
+      <dd>Keines sichtbar, Abgleiche scheitern</dd>
+      <dt>Verwandt</dt>
+      <dd>U+FFF9 bis U+FFFB, die Steuerzeichen für Zwischenzeilen-Annotationen &ndash; ebenfalls unsichtbar und ebenfalls ohne Zweck in gew&ouml;hnlichem Text</dd>
+    </dl>
+  </div>
+</article>
+
 <article class="entry" id="tags">
   <div class="entry-head">
     <h3>U+E0000–U+E007F</h3>
@@ -803,7 +824,7 @@
 (function () {
   "use strict";
 
-  var INVIS = /[\u200B-\u200D\u2060\uFEFF\u00AD\u034F\u061C\u180E\u2061-\u2064\u200E\u200F\u202A-\u202E\u2066-\u2069\uFE00-\uFE0F]/g;
+  var INVIS = /[\u200B-\u200D\u2060\uFEFF\u00AD\u034F\u061C\u180E\u2061-\u2064\u200E\u200F\u202A-\u202E\u2066-\u206F\uFFF9-\uFFFB\uFE00-\uFE0F]/g;
   var TAGS = /[\u{E0000}-\u{E007F}]/gu;
   var SPACE = /[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g;
   var DASH = /[\u2010-\u2015\u2212]/g;
